@@ -1,13 +1,13 @@
 # ngpu : Native WebGPU library in Nim
 Rendering library, targeting the design concepts of the WebGPU API.
-Don't be fooled by the `web` in the name.  
-This project's target is native gpu usage.
+Don't be fooled by the `web` part.  
+This project's target is native gpu usage.  
 
 
 ## ngpu as a Graphics Library
 ngpu is a cohesive graphics API layer, built on top of other tools.  
 
-Not agnostic. Almost a renderer:  
+Not agnostic. Technically a renderer:  
 - Goes beyond a raw wrapper, and takes assumptions on how rendering will be done.  
 - Provides notions of data beyond what a pure API would.  
 - Doesn't try to be agnostic or generalistic.  
@@ -24,8 +24,7 @@ Not reinventing the wheel:
 
 
 ## Current state and todo
-Custom OpenGL API, for ergonomics and naming.  
-See the [examples](./examples) folder for a reference of the current state of the lib.  
+See the [examples](./examples/todo.md) file and folder for a reference of the current state of the lib.  
 
 
 ## Syntax and usage

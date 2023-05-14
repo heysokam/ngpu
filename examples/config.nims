@@ -15,6 +15,11 @@ switch("d", "wgpu")
 #   Not usable for noOpt
 # when not defined(release) and not defined(debug):
 
+#_____________________
+# TODO: Remove. Get from repository, instead of lib, when they are stable.
+# Becomes src/../lib/*
+switch("path", "$projectDir/../../wgpu/src/")
+
 #______________________
 # Release mode 
 # (default from nim.cfg, in lack of other options)
