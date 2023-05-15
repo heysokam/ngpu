@@ -1,14 +1,7 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
 #:____________________________________________________
-# ngpu dependecies
-import ngpu/types
 
-#__________________
-# e00
-var window *:Window
-
-#__________________
-# Global
-var render *:Renderer
+import ./tools/logger as ngpuLogger ; export ngpuLogger
+import ./tools/color  as ngpuColor  ; export ngpuColor
 
