@@ -1,8 +1,8 @@
 # wgpu-nim
 ## Basics
 - [x] Hello NGPU
-- [ ] Hello Clear Window
-- [ ] Hello Triangle
+- [x] Hello Clear Window
+- [x] Hello Triangle
 - [ ] Hello Buffer
 - [ ] Hello Compute
 - [ ] Buffered Triangle
@@ -50,7 +50,7 @@
 ---
 # webgpu-native examples
 ## Basics
-- [ ] Clear screen
+- [x] Clear screen
 - [ ] Coordinate system
 - [ ] Minimal
 - [ ] Triangle

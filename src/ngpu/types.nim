@@ -10,9 +10,15 @@ from   nglfw       as glfw import nil
 from   wgpu        import nil
 
 #_______________________________________
+# ngpu: Constants
+#__________________
+const NoFile * = "UndefinedFile.ext"
+
+#_______________________________________
 # ngpu: Errors
 #__________________
 type DrawError * = object of IOError
+type InitError * = object of IOError
 
 #_______________________________________
 # ngpu: Window
@@ -83,12 +89,50 @@ type Renderer * = ref object of RootObj
 #_______________________________________
 # ngpu: Tech
 #__________________
-type Tech *{.pure.}= enum Clear, Simple
+# Elements
+const VertMain * = "vert"  ## Default name for the entry point of the vertex   shader
+const FragMain * = "frag"  ## Default name for the entry point of the fragment shader
+type  Shader   * = ref object
+  ct     *:wgpu.ShaderModule
+  cfg    *:wgpu.ShaderModuleDescriptor
+  label  *:str
+  code   *:str
+  file   *:str
+#__________________
+type Pipeline * = ref object
+  shader   *:Shader
+  ct       *:wgpu.RenderPipeline
+  cfg      *:wgpu.RenderPipelineDescriptor
+  label    *:str
+#__________________
+type Texture * = ref object
+  ct       *:wgpu.Texture
+  view     *:wgpu.TextureView
+  label    *:str
 
-# TODO:
-type RenderTech  * = ref object
+#__________________
+# Core
+type RenderTarget * = ref object
+  texture  *:Texture
+  ct       *:wgpu.RenderPassEncoder
+  cfg      *:wgpu.RenderPassDescriptor
+  label    *:str
+#__________________
+type RenderPass * = ref object
+  pipeline *:Pipeline
+  trg      *:RenderTarget
+  label    *:str
+#__________________
+# TODO
 type RenderPhase * = ref object
-type RenderPass  * = ref object
+  pass     *:seq[RenderPass]
+  label    *:str
+#__________________
+type Tech *{.pure.}= enum Unknown, Clear, Triangle, Simple
+type RenderTech  * = ref object
+  kind     *:Tech
+  phase    *:seq[RenderPhase]
+  label    *:str
 
 
 #_______________________________________

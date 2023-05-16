@@ -74,7 +74,7 @@ proc new *(_:typedesc[Renderer];
     adapter   = result.adapter,
     limits    = Limits.default(),
     features  = features,
-    queueCfg  = QueueDescriptor(label: label&" | Default Queue"),
+    queueCfg  = QueueDescriptor(label: ( label&" | Default Queue" ).cstring),
     errorCB   = cb.error,
     requestCB = cb.deviceRequest,
     lostCB    = cb.deviceLost,

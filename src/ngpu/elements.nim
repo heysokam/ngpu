@@ -182,7 +182,7 @@ proc new *(_:typedesc[ngpu.Swapchain];
       viewFormatCount  : 0,
       viewFormats      : nil,
       )), # << nextInChain (wgpu Extension)
-    label              : result.label,
+    label              : result.label.cstring,
     usage              : {TextureUsage.renderAttachment},  # Other options only useful for reading back the image, etc (eg: compute pipeline)
     format             : adapter.getPreferredFormat(),
     width              : size.x,
@@ -234,4 +234,19 @@ proc updateEncoder *(r :var Renderer) :void=
   ## Updates the CommandEncoder of the given Renderer with a new one.
   ## Meant to be called each frame by spec.
   r.device.queue.encoder.update(r.device)
+
+#________________________________________________
+# Shader
+#___________________
+proc new *(_:typedesc[Shader];
+    device          :ngpu.Device;
+    label,code,file :str;
+  ) :Shader=
+  ## Creates a new Shader with the given data
+  new result
+  result.label = label
+  result.code  = code 
+  result.file  = file
+  result.cfg   = result.code.wgslToDescriptor(label = result.label)
+  result.ct    = device.ct.create(result.cfg.addr)
 

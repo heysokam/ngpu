@@ -1,9 +1,9 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
 #:____________________________________________________
-# Most minimal draw possible.         |
-# Just clears the screen to a color.  |
-#_____________________________________|
+# Hello Triangle from wgpu-native/examples          |
+# No buffers. Vertices are harcoded in the shader.  |
+#___________________________________________________|
 # ngpu dependencies
 import ngpu
 # Examples dependencies
@@ -22,17 +22,18 @@ proc key (win :glfw.Window; key, code, action, mods :cint) :void {.cdecl.}=
 # Entry Point
 #__________________
 proc run=
-  echo "ngpu | Hello Clear"
+  echo "ngpu | Hello Triangle"
   # Init a new Renderer
   e.render = Renderer.new(
-    title = "ngpu | Hello Clear",
+    title = "ngpu | Hello Triangle",
     label = "ngpu",
     res   = cfg.res,
     key   = key,
     ) # << state.render.init()
   # Update loop
+  var tech = e.render.init(Tech.Triangle)
   while not e.render.close():
-    e.render.draw(Tech.Clear)
+    e.render.draw(tech)
   # Terminate
   e.render.term()
 
