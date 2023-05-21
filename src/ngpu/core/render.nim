@@ -4,17 +4,17 @@
 # External dependencies
 import wgpu
 # ndk dependencies
-import nstd/types  as base
-import nmath/types as m
-from   nglfw       as glfw import nil
+import nstd/types        as base
+import nmath/types       as m
+from   nglfw             as glfw import nil
 # ngpu dependencies
-import ./types     as ngpu
-import ./elements
-import ./window    as w
-import ./callbacks as cb
+import ../types          as ngpu
+import ../elements
+import ../element/window as w
+import ../callbacks      as cb
+import ../tool/logger    as l
 
-#________________________________________________
-# Renderer: Core
+
 #___________________
 proc close *(render :Renderer) :bool=  render.win.close()
   ## Checks if the given Renderer has been marked for closing.
@@ -23,6 +23,41 @@ proc term *(render :var Renderer) :void=  render.win.term()
 proc present *(r :var Renderer) :void=  r.swapChain.ct.present()
   ## Presents the current swapChain texture into the screen.
   ## Similar to gl.swapBuffers()
+
+#___________________
+proc updateView *(r :var Renderer; attempts :int= 2) :void=
+  ## Returns the current texture view of the Swapchain.
+  ## This is a fallible operation by spec, so we attempt multiple times (2x by default when omitted).
+  for attempt in 0..<attempts:
+    let prev = r.swapChain.getSize()
+    let curr = r.win.getSize()
+    # Reset the swapchain context if the window was resized
+    if prev != curr:
+      r.swapChain.setSize(r.win)
+      r.swapChain.ct = r.device.ct.create(r.adapter.surface, r.swapChain.cfg.addr)
+    r.swapChain.view = r.swapChain.getView()
+    if attempt == 0 and r.swapChain.view == nil:
+      wrn "swapChain.getCurrentTextureView() failed; attempting to create a new swap chain..."
+      r.swapChain.setSize(0,0)
+      continue  # Go back for another attempt
+    break       # Exit attempts. We are either at the last attempt, or the texture already works
+  doAssert r.swapChain.view != nil, "Couldn't acquire next swap chain texture"
+#___________________
+proc updateEncoder *(r :var Renderer) :void=
+  ## Updates the CommandEncoder of the given Renderer with a new one.
+  ## Meant to be called each frame by spec.
+  ## Must happen before the Queue is submitted.
+  r.device.queue.encoder.update(r.device)
+
+#___________________
+proc submitQueueLabeled *(r :var Renderer; label :str= "ngpu | Command Buffer") :void=
+  ## Submits the current state of the Queue to the GPU.
+  r.device.queue.buffer = ngpu.CommandBuffer.new(r.device.queue.encoder, label = label)
+  r.device.queue.ct.submit(1, r.device.queue.buffer.ct.addr)
+proc submitQueue *(r :var Renderer) :void=  r.submitQueueLabeled(r.label&" | Command Buffer")
+  ## Submits the current state of the Queue to the GPU.
+
+#___________________
 proc new *(_:typedesc[Renderer];
     res            : UVec2;
     title          : str                         = "ngpu | Renderer";
@@ -37,6 +72,7 @@ proc new *(_:typedesc[Renderer];
     errorWGPU      : wgpu.ErrorCallback          = cb.error;
     logWGPU        : wgpu.LogCallback            = cb.log;
     logLevel       : wgpu.LogLevel               = wgpu.LogLevel.warn;
+    report         : bool                        = true;
     features       : seq[wgpu.Feature]           = @[];
     lost           : wgpu.DeviceLostCallback     = cb.deviceLost;
     power          : wgpu.PowerPreference        = PowerPreference.highPerformance;
@@ -67,18 +103,18 @@ proc new *(_:typedesc[Renderer];
     power         = power,
     forceFallback = forceFallback,
     requestCB     = requestAdapter,
-    report        = true,
+    report        = report,
     ) # << Adapter.new( ... )
   # Create the Device
   result.device = ngpu.Device.new(
-    adapter   = result.adapter,
-    limits    = Limits.default(),
-    features  = features,
-    queueCfg  = QueueDescriptor(label: ( label&" | Default Queue" ).cstring),
-    errorCB   = cb.error,
-    requestCB = cb.deviceRequest,
-    lostCB    = cb.deviceLost,
-    label     = label&" | Device",
+    adapter    = result.adapter,
+    limits     = Limits.default(),
+    features   = features,
+    errorCB    = cb.error,
+    requestCB  = cb.deviceRequest,
+    lostCB     = cb.deviceLost,
+    queueLabel = label&" | Default Queue",
+    label      = label&" | Device",
     ) # << Device.new( ... )
   # Create the Swapchain
   result.swapchain = ngpu.Swapchain.new(

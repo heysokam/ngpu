@@ -19,6 +19,7 @@ switch("d", "wgpu")
 # TODO: Remove. Get from repository, instead of lib, when they are stable.
 # Becomes src/../lib/*
 switch("path", "$projectDir/../../wgpu/src/")
+switch("path", "$projectDir/../../nstd/src/")
 
 #______________________
 # Release mode 

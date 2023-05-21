@@ -9,10 +9,9 @@ import wgpu
 import nstd/types as base
 # ngpu dependencies
 import ../types as ngpu
-import ../window
 import ../elements
-import ../render
-import ../tools/color
+import ../tool/color
+import ../core/render
 
 #___________________
 # Triangle shader

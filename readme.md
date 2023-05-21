@@ -1,11 +1,11 @@
 # ngpu : Native WebGPU library in Nim
-Rendering library, targeting the design concepts of the WebGPU API.
+Rendering library, targeting the design concepts of the WebGPU API.  
 Don't be fooled by the `web` part.  
 This project's target is native gpu usage.  
 
 
 ## ngpu as a Rendering Library
-ngpu is a cohesive graphics API layer, built on top of other tools.  
+ngpu is a cohesive graphics layer, built on top of other tools.  
 
 Not agnostic. Technically a renderer:  
 - Goes beyond a raw wrapper, and takes assumptions on how rendering will be done.  
@@ -17,28 +17,51 @@ Note: Modern means 2015+ hardware, not 2000's version of "modern".
 _Not looking at you, opengl3..._  
 
 Not reinventing the wheel:  
+`wgpu`   for graphics api  
 `glfw`   for window creation  
 `vmath`  for vector math  
 `pixie`  for image loading  
 `chroma` for colors  
 
-
 ## Current state and todo
-See the [examples](./examples/todo.md) file and folder for a reference of the current state of the lib.  
+See the [examples](./examples/todo.md) file and folder for a reference of the current state of what the library can do.  
+The file @[examples/todo.md](./examples/todo.md) has a list of the examples that will be implemented.
 
 
 ## Syntax and usage
 See the [examples](./examples/) folder for how the library is used.  
-The library is built using the Nim `wgpu` wrapper. See the `heysokam/wgpu/examples` folder to get a feel of what the ngpu library is doing in the background.  
+Each example is incrementally more complex than the previous one.  
+
+The basic examples follow the structure of [Learn WebGPU C++](https://eliemichel.github.io/LearnWebGPU/), which I highly recommend for learning the WebGPU-based APIs.  
+The advanced ones are modeled after the [webgpu-native-examples](https://github.com/samdauwe/webgpu-native-examples#Basics) repository.
+
+### Configurability
+ngpu is very configurable, as long as you use the provided tools/paradigms.
+
+#### Data and Config Defaults
+Most data and setup options are dependent on each Render Technique.  
+You can see a list of the implied defaults @[config.md](doc/config.md) doc file.
+
+#### Custom options
+All of the initializer variables have customizable inputs, with sane defaults for when they are omitted.
+Also, all of the elements have a `Type.new( ... )` function, that takes as many options as its technically possible to do so within the bounds of the library.  
+If you create your own functions to do the rendering logic, you can customize basically everything.  
+
+#### Custom Techniques
+Every Rendering style has a unique set of properties and requirements _(what this lib calls a `Technique`)_.
+Each specific Technique requires its unique own set of Pipelines, Buffers, data formats, etc, etc.  
+It would be mental to create an API that could handle all of it without any assumptions _(plus that's essentially what wgpu itself is...)_.  
+As such, the chosen way to configure the Rendering, beyond what's already supplied, is through the creation of new RenderTech logic.  
+You can find reference implementations of this in the [ngpu/tech](./src/ngpu/tech/) folder.  
+And an explanation of what they conceptually are @[tech.md](./doc/tech.md) file.  
+
 
 ## ngpu vs wgpu
-ngpu is an abstraction built with `wgpu-native`.  
-The internal structure is a rendering library, not a raw API.  
+ngpu is an abstraction built with `wgpu-native`, with the wrapper at [heysokam/wgpu](https://github.com/heysokam/wgpu).
+Its internal structure is a rendering library, not a raw API.  
 As such, some wgpu conventions have been changed to fit its goals.  
+You can find more information about this in the [internal.md](doc/internal.md) doc file.
 
-Changes from wgpu to ngpu:
-- `ngpu.RenderTarget` is conceptually the same as a `wgpu.RenderPass`, but contains more data (like the textures it draws into).
-- `ngpu.RenderPass` is a new concept. Its the smallest part of a `RenderTech`.
 
 ## wgpu vs Dawn
 The WebGPU API is currently tied to a division between wgpu and Dawn.  
@@ -47,7 +70,4 @@ In the end, the goal of this library is to use the same API concepts that WebGPU
 
 This lib is currently using wgpu-native as its WebGPU backend.  
 Dawn support might (or might not) be implemented in the future, depending on how the situation evolves.  
-
-## Data and Config Defaults
-Data and configuration is dependent on each Render Technique.
 

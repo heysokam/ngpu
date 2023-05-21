@@ -5,10 +5,9 @@
 import wgpu
 # ngpu dependencies
 import ../types
-import ../tools/color
-import ../window
+import ../tool/color
 import ../elements
-import ../render
+import ../core/render
 
 #_______________________________________
 proc clear *(r :var Renderer; color :chroma.Color) :void=

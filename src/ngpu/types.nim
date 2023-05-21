@@ -10,6 +10,11 @@ from   nglfw       as glfw import nil
 from   wgpu        import nil
 
 #_______________________________________
+# wgpu: Exports
+#__________________
+export wgpu.BufferUsage
+
+#_______________________________________
 # ngpu: Constants
 #__________________
 const NoFile * = "UndefinedFile.ext"
@@ -36,11 +41,13 @@ type Instance * = ref object
   cfg      *:wgpu.InstanceDescriptor
   label    *:str
 #__________________
-type Adapter * = ref object
-  surface  *:wgpu.Surface
+type AdapterBase * = ref object of RootObj
+  ## Base Adapter. Used only for no-window apps.
   ct       *:wgpu.Adapter
   cfg      *:wgpu.RequestAdapterOptions
   label    *:str
+type Adapter * = ref object of AdapterBase
+  surface  *:wgpu.Surface
 #__________________
 type CommandBuffer * = ref object
   ct       *:wgpu.CommandBuffer
@@ -70,11 +77,19 @@ type Swapchain * = ref object
   ct       *:wgpu.Swapchain
   cfg      *:wgpu.SwapChainDescriptor
   label    *:str
+#__________________
+type Buffer *[T]= ref object
+  data   *:T
+  ct     *:wgpu.Buffer
+  cfg    *:wgpu.BufferDescriptor
+  label  *:str
+
 
 #_______________________________________
 # ngpu: Core
 #__________________
 type Renderer * = ref object of RootObj
+  ## Rendering core
   label      *:str
   win        *:Window
   bg         *:Color
@@ -84,6 +99,18 @@ type Renderer * = ref object of RootObj
   swapChain  *:Swapchain
   # cam        *:Camera
   # tech       *:RenderTechs
+#__________________
+type Minimal * = ref object of RootObj
+  ## Minimal core
+  label     *:str
+  instance  *:Instance
+  adapter   *:AdapterBase
+  device    *:Device
+#__________________
+type Compute * = ref object of RootObj
+  ## Compute-only core
+  label     *:str
+
 
 
 #_______________________________________

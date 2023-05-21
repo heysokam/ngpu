@@ -9,8 +9,8 @@ import nstd/C/address
 from   nglfw      as glfw import nil
 import nmath
 # ngpu dependencies
-import ./types
-import ./tools/logger
+import ../types
+import ../tool/logger
 
 
 #________________________________________________
@@ -39,7 +39,7 @@ proc error *(code :int32; desc :cstring) :void {.cdecl, discardable.} =
 #__________________
 proc new *(_:typedesc[Window]; 
     res         : UVec2;
-    title       : str                     = "ngpu";
+    title       : str;
     resizable   : bool                    = true;
     resize      : glfw.FrameBufferSizeFun = nil;
     key         : glfw.KeyFun             = nil;
@@ -67,7 +67,7 @@ proc new *(_:typedesc[Window];
 #__________________
 template init *(win :var Window;
     res         : UVec2;
-    title       : str                     = "ngpu";
+    title       : str;
     resizable   : bool                    = true;
     resize      : glfw.FrameBufferSizeFun = nil;
     key         : glfw.KeyFun             = nil;
