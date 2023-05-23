@@ -3,7 +3,7 @@
 #:____________________________________________________
 # Write a Buffer to GPU, and read its data back      |
 # No window, no compute. Only does a read/write op.  |
-# This operations are only useful for compute.       |
+# These operations are only useful for compute.      |
 #____________________________________________________|_____________________
 # NOTE: This example is fairly verbose for whats normal in the lib.        |
 # The functionality of the Minimal core is not abstracted into any Tech.   |

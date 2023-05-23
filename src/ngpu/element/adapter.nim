@@ -10,6 +10,14 @@ import ../types       as ngpu
 import ../tool/logger as l
 from   ../callbacks   as cb import nil
 
+
+#___________________
+proc reportLimits (adapter :ngpu.AdapterBase) :void=
+  # Read the vertex attributes and buffers limits of the system
+  l.info ":: \"Best\" limits supported by the adapter initialized on this system:"
+  var sup :SupportedLimits
+  discard adapter.ct.get(sup.addr)
+  l.info ": adapter.maxVertexAttributes: ",sup.limits.maxVertexAttributes
 #___________________
 proc reportFeatures (adapter :ngpu.AdapterBase) :void=
   l.info ":: WGPU Features supported by this system: "
@@ -26,14 +34,17 @@ proc reportCapabilities (adapter :ngpu.Adapter) :void=
   for alpha in alphaModes:     l.info ":  - ",$alpha
 
 #___________________
-proc info *(adapter :ngpu.AdapterBase) :void=  adapter.reportFeatures()
-  ## Reports the features supported by the given AdapterBase
+proc info *(adapter :ngpu.AdapterBase) :void=
+  ## Reports the features and limits supported by the given AdapterBase
   ## Uses the internal `info` logging function, which can be reasigned on context creation.
+  adapter.reportFeatures()
+  adapter.reportLimits()
 proc info *(adapter :ngpu.Adapter) :void=
-  ## Reports the features and capabilities supported by the given Adapter
+  ## Reports the features, capabilities and limits supported by the given Adapter
   ## Uses the internal `info` logging function, which can be reasigned on context creation.
   adapter.reportFeatures()
   adapter.reportCapabilities()
+  adapter.reportLimits()
 
 #___________________
 proc getPreferredFormat *(adapter :ngpu.Adapter) :wgpu.TextureFormat=

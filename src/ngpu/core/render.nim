@@ -13,6 +13,7 @@ import ../elements
 import ../element/window as w
 import ../callbacks      as cb
 import ../tool/logger    as l
+import ../element/log    as lg
 
 
 #___________________
@@ -90,7 +91,7 @@ proc new *(_:typedesc[Renderer];
   result.win = Window.new(res, title, resizable, resize, key, mousePos, mouseBtn, mouseScroll, error)
   #__________________
   # Set wgpu.Logging
-  logLevel.set(logWGPU)  # TODO: set(info, wrn, err, fail)
+  lg.set(logLevel, logWGPU)  # TODO: set(info, wrn, err, fail)
   #__________________
   # Init wgpu
   # Create the Instance

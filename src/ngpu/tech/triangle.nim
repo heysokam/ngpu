@@ -6,7 +6,7 @@ import std/strformat
 # External dependencies
 import wgpu
 # ndk dependencies
-import nstd/types as base
+import nstd
 # ngpu dependencies
 import ../types as ngpu
 import ../elements

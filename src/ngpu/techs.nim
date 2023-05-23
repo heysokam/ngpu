@@ -4,22 +4,30 @@
 # std dependencies
 import std/strformat
 # ngpu dependencies
-import ./types
+import ./types as ngpu
 
 #________________________________________________
 # Tech: Import/Export
 #___________________
+# Shared
+import ./tech/shared/types as Type
+export Type.RenderMesh
+import ./tech/shared/mesh
+export mesh.new
+export mesh.upload
+#___________________
 import ./tech/clear
 import ./tech/triangle
-import ./tech/simple   ; export simple
+import ./tech/simple
 
 #________________________________________________
 # Tech: Init Selection
 #___________________
 proc init *(render :var Renderer; tech :Tech) :RenderTech=
   case  tech
-  of    Tech.Clear:     raise newException(InitError, "Initializing Tech.Clear is not needed. Just draw with it directly.")
+  of    Tech.Clear:     raise newException(InitError, "Initializing Tech.Clear is not needed. Just call to draw with its name directly.")
   of    Tech.Triangle:  result = triangle.init(render)
+  of    Tech.Simple:    result = simple.init(render)
   else: raise newException(InitError, &"Initializing RenderTech.{$tech} is not implemented. Create your own function for it, or submit a PR.")
 
 #________________________________________________
@@ -35,4 +43,10 @@ proc draw *(render :var Renderer; tech :var RenderTech) :void=
   of    Tech.Clear:     raise newException(DrawError, "Drawing Tech.Clear with a RenderTech object is not supported. Use Tech.Clear directly instead.")
   of    Tech.Triangle:  triangle.draw(render, tech)
   else: raise newException(DrawError, &"Drawing with RenderTech.{$tech.kind} without a RenderMesh is not supported.")
+#___________________
+proc draw *(render :var Renderer; mesh :RenderMesh; tech :var RenderTech) :void=
+  case  tech.kind
+  of    Tech.Clear, Tech.Triangle: raise newException(DrawError, &"Drawing a mesh with RenderTech.{$tech.kind} is not supported. Remove the mesh to call the other function overloads.")
+  of    Tech.Simple:  simple.draw(render, mesh, tech)
+  else: raise newException(DrawError, &"Drawing a RenderMesh with RenderTech.{$tech.kind} is not implemented. Create your own function for it, or submit a PR.")
 

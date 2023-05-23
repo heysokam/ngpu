@@ -17,7 +17,7 @@ proc new *(_:typedesc[Shader];
   ## Creates a new Shader with the given data
   new result
   result.label = label
-  result.code  = code 
+  result.code  = code
   result.file  = file
   result.cfg   = result.code.wgslToDescriptor(label = result.label)
   result.ct    = device.ct.create(result.cfg.addr)

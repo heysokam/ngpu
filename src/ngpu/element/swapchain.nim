@@ -6,12 +6,13 @@ import std/strformat
 # External dependencies
 import wgpu
 # ndk dependencies
+import nstd
 import nmath
-import nstd/types     as base
 # ngpu dependencies
 import ../types       as ngpu
 import ../tool/logger as l
 import ./adapter
+import ./window
 
 
 #________________________________________________

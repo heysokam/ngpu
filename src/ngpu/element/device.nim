@@ -8,8 +8,20 @@ import nstd/types   as base
 # ngpu dependencies
 import ../types     as ngpu
 from   ../callbacks as cb import nil
+import ../tool/logger as l
 import ./queue
 
+#___________________
+proc reportLimits (device :ngpu.Device) :void=
+  l.info ":: Limits to which this system's device has been restricted:"
+  var sup :SupportedLimits
+  discard device.ct.get(sup.addr)
+  l.info ": device.maxVertexAttributes:  ",sup.limits.maxVertexAttributes
+#___________________
+proc info *(device :ngpu.Device) :void=
+  ## Reports the limits supported by the given Device.
+  ## Uses the internal `info` logging function, which can be reasigned on context creation.
+  device.reportLimits()
 
 #___________________
 proc new *(_:typedesc[ngpu.Device];
@@ -19,6 +31,7 @@ proc new *(_:typedesc[ngpu.Device];
     errorCB    : wgpu.ErrorCallback         = cb.error;
     requestCB  : wgpu.RequestDeviceCallback = cb.deviceRequest;
     lostCB     : wgpu.DeviceLostCallback    = cb.deviceLost;
+    report     : bool                       = true;
     queueLabel : str                        = "ngpu | Default Queue";
     label      : str                        = "ngpu | Device";
   ) :ngpu.Device=
@@ -37,10 +50,12 @@ proc new *(_:typedesc[ngpu.Device];
     ) # << deviceDesc
   adapter.ct.request(result.cfg.addr, requestCB, result.ct.addr)
   # Set the callbacks
-  result.ct.set(errorCB, nil)
-  result.ct.set(lostCB, nil)
+  wgpu.set(result.ct, errorCB, nil)
+  wgpu.set(result.ct, lostCB, nil)
   # Get the device queue
   result.queue = ngpu.Queue.new(result)
+  # Report info to console
+  if report: result.info()
 
 #___________________
 proc sync *(device :var ngpu.Device) :bool {.discardable.}=  device.ct.poll(wait = true, nil)

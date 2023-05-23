@@ -3,12 +3,12 @@
 - [x] Hello NGPU
 - [x] Hello Clear Window
 - [x] Hello Triangle
-- [ ] Hello Buffer
+- [x] Hello Buffer
 - [ ] Hello Compute
-- [ ] Buffered Triangle
-  - [ ] Single Buffer
-  - [ ] Multi-Buffer
-  - [ ] Indexed Multi-Buffer
+- [x] Buffered Triangle
+  - [x] Single Buffer
+  - [x] Multi-Buffer
+  - [x] Indexed Multi-Buffer
 - [ ] Uniforms
   - [ ] Hello Uniform variable
   - [ ] Hello Uniform Block

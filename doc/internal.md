@@ -30,3 +30,9 @@ Instead being separate objects by themselves, they are stored inside the object/
 # Unrolled examples
 The fully unrolled versions of this repostory's examples can be found @[heysokam/wgpu/examples](https://github.com/heysokam/wgpu/examples).
 
+
+# Threading
+This lib is single threaded.  
+Making a multi-threaded renderer is a far-reaching goal.  
+Which means that it will definitely happen, just not anytime soon.  
+
