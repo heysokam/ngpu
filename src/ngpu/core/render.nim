@@ -11,6 +11,7 @@ from   nglfw             as glfw import nil
 import ../types          as ngpu
 import ../elements
 import ../element/window as w
+import ../element/buffer as buf
 import ../callbacks      as cb
 import ../tool/logger    as l
 import ../element/log    as lg
@@ -57,6 +58,18 @@ proc submitQueueLabeled *(r :var Renderer; label :str= "ngpu | Command Buffer") 
   r.device.queue.ct.submit(1, r.device.queue.buffer.ct.addr)
 proc submitQueue *(r :var Renderer) :void=  r.submitQueueLabeled(r.label&" | Command Buffer")
   ## Submits the current state of the Queue to the GPU.
+
+#___________________
+proc upload *[T](render :Renderer; trg :var RenderData[T]) :void=
+  ## Uploads the data currently contained in the buffer of the given RenderData object.
+  render.device.upload(trg.buffer)
+#___________________
+proc update *[T](render :Renderer; trg :var RenderData[T]; data :T) :void=
+  ## Updates the given `trg` RenderData with the given input `data`.
+  ## Queues an upload operation to send the data to the GPU.
+  trg.buffer.data = data
+  render.upload(trg)
+
 
 #___________________
 proc new *(_:typedesc[Renderer];
@@ -113,6 +126,7 @@ proc new *(_:typedesc[Renderer];
     features   = features,
     errorCB    = cb.error,
     requestCB  = cb.deviceRequest,
+    report     = report,
     lostCB     = cb.deviceLost,
     queueLabel = label&" | Default Queue",
     label      = label&" | Device",

@@ -30,7 +30,7 @@ func getSize *(w :var Window) :UVec2=
 #__________________
 proc error *(code :int32; desc :cstring) :void {.cdecl, discardable.} =
   ## GLFW error callback
-  err &"Error:{code} {desc}"
+  err &"Error:{$code} {desc}"
   err $desc
 
 

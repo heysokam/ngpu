@@ -40,8 +40,8 @@ proc format *[T](_:typedesc[T]) :VertexFormat=
   else: raise newException(LoadError, "Tried to return the VertexFormat of type {$T}, but the operation is not implemented for it.")
 
 #__________________
-proc new *(_:typedesc[VertexLayout]; T :typedesc; location :Attr) :VertexLayout=
-  ## Returns a VertexLayout object, with data based on `T` and `location`.
+proc new *(_:typedesc[VertexShape]; T :typedesc; location :Attr) :VertexShape=
+  ## Returns a VertexShape object, with data based on `T` and `location`.
   new result
   result.attr = VertexAttribute(
     format         : T.format,
@@ -55,11 +55,11 @@ proc new *(_:typedesc[VertexLayout]; T :typedesc; location :Attr) :VertexLayout=
     attributes       : result.attr.addr,
     ) # << VertexBufferLayout
 #__________________
-proc new *(_:typedesc[VertexBufferLayout]; vert :var VertexLayout) :VertexBufferLayout=
-  ## Returns a VertexBufferLayout object, with data based on a single VertexLayout.
+proc new *(_:typedesc[VertexShape]; vert :var VertexShape) :VertexBufferLayout=
+  ## Returns a VertexShape object, with data based on a single VertexShape.
   ## The resulting data:
   ## - Is valid for sending to wgpu as it is.
-  ## - Depends on the address of the input VertexLayout.attr for its `attributes` field.
+  ## - Depends on the address of the input VertexShape.attr for its `attributes` field.
   result = VertexBufferLayout(
     arrayStride      : vert.ct.arrayStride,
     stepMode         : vert.ct.stepMode,
@@ -67,19 +67,19 @@ proc new *(_:typedesc[VertexBufferLayout]; vert :var VertexLayout) :VertexBuffer
     attributes       : vert.attr.addr,
     ) # << VertexBufferLayout
 #__________________
-proc new *(_:typedesc[VertexBufferLayout]; verts :seq[VertexLayout]) :seq[VertexBufferLayout]=
-  ## Returns a seq[VertexBufferLayout] objects, with data based on the given seq[VertexLayout].
+proc new *(_:typedesc[VertexShape]; verts :seq[VertexShape]) :seq[VertexBufferLayout]=
+  ## Returns a seq[VertexBufferLayout] objects, with data based on the given seq[VertexShape].
   ## The resulting data:
   ## - Is valid for sending to wgpu as it is.
-  ## - Depends on the address of the input VertexLayout.attr for its `attributes` field.
+  ## - Depends on the address of the input VertexShape.attr for its `attributes` field.
   for vert in verts: result.add vert.ct
 #__________________
 proc new *(_:typedesc[Mesh]; t2:typedesc[MeshShape]) :MeshShape=
   ## Returns an appropriate MeshShape for the given `Mesh` type.
-  result.add VertexLayout.new(Vec3, Attr.pos)
-  result.add VertexLayout.new(ngpu.Color, Attr.color)
-  result.add VertexLayout.new(Vec2, Attr.uv)
-  result.add VertexLayout.new(Vec3, Attr.norm)
+  result.add VertexShape.new(Vec3, Attr.pos)
+  result.add VertexShape.new(ngpu.Color, Attr.color)
+  result.add VertexShape.new(Vec2, Attr.uv)
+  result.add VertexShape.new(Vec3, Attr.norm)
 
 #__________________
 proc new *[T](_:typedesc[MeshIndices[T]];
@@ -102,7 +102,7 @@ proc new *[T](_:typedesc[MeshAttribute[T]];
   result.data   = data
   result.size   = data.size
   result.offset = offset
-  result.layout = VertexLayout.new(T, result.kind)
+  result.layout = VertexShape.new(T, result.kind)
 
 #__________________
 proc get *(mesh :RenderMesh; _:typedesc[MeshShape]) :MeshShape=

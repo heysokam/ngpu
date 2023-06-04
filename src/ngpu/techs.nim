@@ -3,6 +3,8 @@
 #:____________________________________________________
 # std dependencies
 import std/strformat
+# ndk dependencies
+import nstd/types as base
 # ngpu dependencies
 import ./types as ngpu
 
@@ -23,19 +25,27 @@ import ./tech/simple
 #________________________________________________
 # Tech: Init Selection
 #___________________
-proc init *(render :var Renderer; tech :Tech) :RenderTech=
+proc init *(render :var Renderer; tech :Tech; code :str; data :var tuple) :RenderTech=
   case  tech
   of    Tech.Clear:     raise newException(InitError, "Initializing Tech.Clear is not needed. Just call to draw with its name directly.")
   of    Tech.Triangle:  result = triangle.init(render)
-  of    Tech.Simple:    result = simple.init(render)
-  else: raise newException(InitError, &"Initializing RenderTech.{$tech} is not implemented. Create your own function for it, or submit a PR.")
+  of    Tech.Simple:    result = simple.init(render, code, data)
+  else: raise newException(InitError, "Initializing RenderTech.{$tech} is not implemented. Create your own function for it, or submit a PR.")
+#___________________
+proc init *(render :var Renderer; tech :Tech) :RenderTech=
+  var noData :tuple= ()
+  result = render.init(tech, NoCode, noData)
+#___________________
+proc init *(render :var Renderer; tech :Tech; code :str) :RenderTech=
+  var noData :tuple= ()
+  result = render.init(tech, code, noData)
 
 #________________________________________________
 # Tech: Draw Selection
 #___________________
 proc draw *(render :var Renderer; tech :Tech) :void=
   case  tech
-  of    Tech.Clear:     clear.draw(render)
+  of    Tech.Clear: clear.draw(render)
   else: raise newException(DrawError, &"Drawing with Tech.{$tech} without a RenderMesh or a RenderTech is not supported. Remember that RenderTech and Tech are different types.")
 #___________________
 proc draw *(render :var Renderer; tech :var RenderTech) :void=

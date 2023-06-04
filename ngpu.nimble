@@ -30,8 +30,10 @@ skipdirs = @[binDir, examplesDir, testsDir, docDir]  # Tell nimble what folders 
 #___________________
 task tut, "     Builds the latest/current wip tutorial app.":  runExample "tut"
 #___________________
-task hello, "   Example 00:  hello window+instance":  runExample "e00_hellongpu"
-task clear, "   Example 01:  clear window":           runExample "e01_helloclear"
-task triangle, "Example 02:  hello triangle":         runExample "e02_hellotriangle"
-task buffer, "  Example 03:  hello buffer":           runExample "e03_hellobuffer"
+task hello, "    Example 00:  hello window+instance"            : runExample "e00_hellongpu"
+task clear, "    Example 01:  clear window"                     : runExample "e01_helloclear"
+task triangle, " Example 02:  hello triangle"                   : runExample "e02_hellotriangle"
+task buffer, "   Example 03:  hello buffer"                     : runExample "e03_hellobuffer"
+task triangle4, "Example 07:  indexed multi-buffered triangle." : runExample "e07_trianglebuffered3"
+task struct, "   Example 09:  uniform struct."                  : runExample "e09_uniformstruct"
 

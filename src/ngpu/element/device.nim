@@ -16,7 +16,8 @@ proc reportLimits (device :ngpu.Device) :void=
   l.info ":: Limits to which this system's device has been restricted:"
   var sup :SupportedLimits
   discard device.ct.get(sup.addr)
-  l.info ": device.maxVertexAttributes:  ",sup.limits.maxVertexAttributes
+  for name,limit in sup.limits.fieldPairs:
+    l.info ": device.",name,": ",limit
 #___________________
 proc info *(device :ngpu.Device) :void=
   ## Reports the limits supported by the given Device.

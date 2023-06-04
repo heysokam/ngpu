@@ -1,51 +1,63 @@
-# wgpu-nim
-## Basics
+## 0.0.1 : Basics
 - [x] Hello NGPU
 - [x] Hello Clear Window
-- [x] Hello Triangle
+- [x] Hello Hardcoded Triangle
+## 0.0.2 : Buffers
 - [x] Hello Buffer
-- [ ] Hello Compute
 - [x] Buffered Triangle
   - [x] Single Buffer
   - [x] Multi-Buffer
   - [x] Indexed Multi-Buffer
-- [ ] Uniforms
-  - [ ] Hello Uniform variable
-  - [ ] Hello Uniform Block
-  - [ ] Hello Texture
-  - [ ] Hello Sampled Texture
-
-## 3D
+## 0.0.3 : Uniforms
+- [x] Hello Uniforms (variable and block)
+  - [x] wgsl codegen
+  - [x] BindGroup management
+## 0.0.4 : Textures
+- [ ] Hello Texture
+- [ ] Hello Sampled Texture
+## 0.1.0 : 3D Rendering  (first publishable)
 - [ ] Depth attachment
-- [ ] Cube
+- [ ] Hardcoded mesh (Textured Cube)
   - [ ] Flat
   - [ ] Camera
-- [ ] Textured Cube
-- [ ] Instanced Cube
-- [ ] Multiple Meshes
-
-# Apps
-- [ ] Framebuffer
-- [ ] Shadertoy
+- [ ] Multiple Hardcoded Meshes
 
 
-# ngpu
-- [ ] Scene
-  - [ ] Multiple Lights
-  - [ ] Multiple Models
 
-- [ ] Forward
-  - [ ] Dif
-  - [ ] Spe
 
-- [ ] Deferred
-  - [ ] G-Buffer
-    - [ ] Position
-    - [ ] Normal
-    - [ ] Dif+Spe
-    - [ ] Depth
-  - [ ] Multiple Lights
+## 0.2.0 : Model from file
+- [ ] Single Mesh
+- [ ] Multi-Mesh Model
+- [ ] Multi-Model Scene
+## 0.3.0 : Simple Forward
+- [ ] Directional Light (sun/sky)
+- [ ] Ambient
+- [ ] Diffuse
+- [ ] Specular
+## 0.4.0 : Multiple Lights
+## 0.5.0 : Materials
+## 0.7.0 : wgslToy
+- [ ] Fullscreen Triangle
+- [ ] Custom Shader file load
+- [ ] Shader hot-reloading
+- [ ] Basic ShaderToy parameters
+## 0.8.0 : Deferred Rendering
+- [ ] Instanced Drawing (for debug light cubes)
+- [ ] Offscreen Rendering
+- [ ] G-Buffer
+  - [ ] Position
+  - [ ] Normal
+  - [ ] Dif+Spe
+  - [ ] Depth
+- [ ] Multiple Lights
+# 0.9.0 : Compute
+- [ ] Hello Compute
+- [ ] Hello Framebuffer
+# 1.0.0 : Game Renderer
+- [ ] Transparency (fake liquid/glass)
+- [ ] Post-Process Phase
 
+# ?.?.? : Debug UI
 
 ---
 # webgpu-native examples
@@ -53,7 +65,7 @@
 - [x] Clear screen
 - [ ] Coordinate system
 - [ ] Minimal
-- [ ] Triangle
+- [x] Triangle
 - [ ] Square
 - [ ] Two cubes
 - [ ] Bind groups

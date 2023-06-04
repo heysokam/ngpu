@@ -6,13 +6,13 @@ import wgpu
 # ndk dependencies
 import nstd
 # ngpu dependencies
-import ../types
+import ../types as ngpu
 import ../tool/color
 import ../elements
 import ../core/render
 
 #_______________________________________
-proc clear *(r :var Renderer; color :chroma.Color) :void=
+proc clear *(r :var Renderer; color :ngpu.Color) :void=
   ## Orders wgpu to execute a simple drawClear RenderPass.
   # Create the RenderPass
   var renderPass = r.device.queue.encoder.ct.begin(vaddr RenderPassDescriptor(

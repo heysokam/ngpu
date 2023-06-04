@@ -34,7 +34,7 @@ type MeshIndices *[T]= ref object of MeshComponent[T]
   format  *:IndexFormat
 type MeshAttribute *[T]= ref object of MeshComponent[T]
   kind    *:Attr
-  layout  *:VertexLayout
+  layout  *:VertexShape
 #_____________________________
 type RenderMesh * = ref object
   pos     *:MeshAttribute[Vec3]

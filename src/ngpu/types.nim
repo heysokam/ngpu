@@ -1,6 +1,8 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
 #:____________________________________________________
+# std dependencies
+import std/packedsets
 # External dependencies
 import pkg/chroma
 # ndk dependencies
@@ -18,14 +20,17 @@ export chroma.Color
 #_______________________________________
 # ngpu: Constants
 #__________________
-const NoFile * = "UndefinedFile.ext"
+const NoFile     * = "UndefinedFile.ext"
+const NoCode     * = "// NoShaderCode"
+const NoTypeCode * = "// NoTypeCode"
 
 #_______________________________________
 # ngpu: Errors
 #__________________
-type DrawError * = object of IOError
-type InitError * = object of IOError
-type LoadError * = object of IOError
+type InitError * = object of IOError  ## When initializing objects in the whole lib.
+type LoadError * = object of IOError  ## When trying to load a resource.
+type DataError * = object of IOError  ## When trying to access data that should already be loaded/declared.
+type DrawError * = object of IOError  ## When trying to draw an object.
 #_______________________________________
 # ngpu: Window
 #__________________
@@ -85,7 +90,6 @@ type Buffer *[T]= ref object
   cfg    *:wgpu.BufferDescriptor
   label  *:str
 
-
 #_______________________________________
 # ngpu: Core
 #__________________
@@ -99,7 +103,6 @@ type Renderer * = ref object of RootObj
   device     *:Device
   swapChain  *:Swapchain
   # cam        *:Camera
-  # tech       *:RenderTechs
 #__________________
 type Minimal * = ref object of RootObj
   ## Minimal core
@@ -115,9 +118,82 @@ type Compute * = ref object of RootObj
 
 
 #_______________________________________
-# ngpu: Tech
+# ngpu: Tech Elements
 #__________________
-# Elements
+const DefaultMaxBindgroups * = 4     # from: https://docs.rs/wgpu-types/0.16.0/src/wgpu_types/lib.rs.html#912
+const DefaultMaxBindings   * = 640
+#_____________________________
+type BindingKind *{.pure.}= enum data, blck, sampler, tex, texStore
+type BindingID  * = range[0..DefaultMaxBindings-1]  ## Range of ids allowed for binding.
+type BindingIDs * = PackedSet[BindingID]            ## Contains the binding ids used by a binding group.
+type Group *{.pure.}= enum  # aka BindGroup id
+  global   ##  Data that never changes, or changes once per frame.
+  model    ##  Data used for an entire model. Changes only on model change.
+  mesh     ##  Data of a single Mesh. Changes each time the Mesh is changed.
+  multi    ##  Data that changes more than once for the same Mesh (multipass). Maximum guaranteed group to exist.
+  # other  ##  Other data. We use wgpu.default() values, so it is disabled. Not guaranteed to exist by the spec.
+converter toInt *[T :SomeInteger](g :Group) :T=  T(g.ord)
+#_____________________________
+type BindingShape * = ref object
+  kind   *:BindingKind  # TODO: Texture+Sampler binding shape as variant type
+  id     *:BindingID
+  ct     *:wgpu.BindGroupLayoutEntry
+  label  *:str
+type BindingShapes * = array[BindingID, BindingShape]
+#_____________________________
+type Binding * = ref object
+  id       *:BindingID
+  bufCt    *:wgpu.Buffer
+  bufOffs  *:uint64
+  bufSize  *:uint64
+  sampler  *:wgpu.Sampler
+  texView  *:wgpu.TextureView
+type Bindings * = array[BindingID, Binding]
+#_____________________________
+type GroupShape * = ref object
+  entries  *:BindingShapes
+  id       *:Group
+  ct       *:wgpu.BindGroupLayout
+  cfg      *:wgpu.BindGroupLayoutDescriptor
+  label    *:str
+type GroupShapes * = array[Group, GroupShape]  ## Data of all BindGroup Shapes. Used by the PipelineShape
+#_____________________________
+type BindGroup * = ref object
+  entries  *:Bindings
+  id       *:Group
+  ct       *:wgpu.BindGroup
+  cfg      *:wgpu.BindGroupDescriptor
+  label    *:str
+type BindGroups * = array[Group, BindGroup]   ## Data of all the -real- BindGroups
+#__________________
+type DataBind * = ref object
+  group      *:Group        ## @group(id) where this Uniform is connected to.
+  id         *:BindingID    ## @binding(id) where this Uniform is connected to.
+  kind       *:BindingKind  ## Will always be `.data` for this object
+  shape      *:BindingShape ## Shape of the RenderData connector
+  ct         *:Binding      ## RenderData connector context
+#__________________
+type DataCode * = object
+  vName      *:str          ## Name by which the variable will be accessed in shader code.
+  tName      *:str          ## Type Name of the variable in wgsl code.
+  define     *:str          ## wgsl code for its Type declaration
+  variable   *:str          ## wgsl code for its variable definition
+#__________________
+type RenderData *[T]= ref object
+  # note: Called `Uniform` in other libraries. Same concept.
+  binding    *:DataBind    ## Binding data of the RenderData object
+  code       *:DataCode    ## wgsl Code that is generated to use the RenderData object
+  buffer     *:Buffer[T]   ## CPU and GPU data contents.
+  label      *:str
+type RenderBlock *[T]= distinct RenderData  ## Read+Write version of RenderData
+  # note: Called `Shader Storage` in other libraries. Same concept.
+#__________________
+type Texture * = ref object
+  ct       *:wgpu.Texture
+  view     *:wgpu.TextureView
+  label    *:str
+# TODO: TextureBlock  (aka StorageTex)
+#__________________
 const VertMain * = "vert"  ## Default name for the entry point of the vertex   shader
 const FragMain * = "frag"  ## Default name for the entry point of the fragment shader
 const CompMain * = "comp"  ## Default name for the entry point of the compute  shader
@@ -128,42 +204,28 @@ type  Shader   * = ref object
   code   *:str
   file   *:str
 #__________________
-type VertexLayout * = ref object
+type VertexShape * = ref object
   ct    *:wgpu.VertexBufferLayout
   attr  *:wgpu.VertexAttribute
-type MeshShape * = seq[VertexLayout]
-##[
-  ct    *:seq[wgpu.VertexBufferLayout]  ## Data passed to wgpu as it wants it.
-  inner *:seq[VertexLayout]             ## Properties/Data of the VertexBufferLayout. Must match ct.len
-  # NOTE: Contains some duplicate data.
-  # VertexBufferLayout is an array, and it wants an array of VertexAttribute inside it.
-  # - If we use a seq[VertexBufferLayout], we can send the data as it is to wgpu (aka the purpose of the `ct` field),
-  #   but we no longer have the inner array pointer the moment we exit the constructor.
-  # - If we use a seq[VertexLayout] we solve the inner array issue (aka the purpose of the `inner` field),
-  #   but we are no longer able to send the data as it is on our side.
-  # I don't like this, but I currently don't know any other alternative.
-  # TODO: ?? Can we create a seq[VertexBufferLayout] with the data contained in inner.ct directly ?? ??
-  #       (currently copying it, so its duplicate. but maybe we can reference instead in some way)
-]##
+type MeshShape * = seq[VertexShape]
 #__________________
-type PipelineLayout * = ref object
+type PipelineShape * = ref object
+  groups   *:GroupShapes
   ct       *:wgpu.PipelineLayout
   cfg      *:wgpu.PipelineLayoutDescriptor
   label    *:str
 #__________________
-type Pipeline  * = ref object
+type Pipeline * = ref object
   shader    *:Shader
   meshShape *:MeshShape
-  layout    *:PipelineLayout
+  shape     *:PipelineShape
   ct        *:wgpu.RenderPipeline
   cfg       *:wgpu.RenderPipelineDescriptor
   label     *:str
-#__________________
-type Texture * = ref object
-  ct       *:wgpu.Texture
-  view     *:wgpu.TextureView
-  label    *:str
 
+
+#_______________________________________
+# ngpu: Tech Components/Parts
 #__________________
 when defined(debug):
   const ColorClear *:Color= color(1.0, 0.0, 0.5, 1.0)
@@ -184,17 +246,20 @@ type RenderTarget * = ref object
   label    *:str
 #__________________
 type RenderPass * = ref object
+  binds    *:BindGroups
   pipeline *:Pipeline
   trg      *:RenderTarget
   label    *:str
 #__________________
 # TODO
+type Phase *{.pure.}= enum Unknown, G, Light, Post
 type RenderPhase * = ref object
+  kind     *:Phase
   pass     *:seq[RenderPass]
   label    *:str
 #__________________
 type Tech *{.pure.}= enum Unknown, Clear, Triangle, Simple
-type RenderTech  * = ref object
+type RenderTech * = ref object
   kind     *:Tech
   phase    *:seq[RenderPhase]
   label    *:str

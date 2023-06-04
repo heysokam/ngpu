@@ -17,7 +17,8 @@ proc reportLimits (adapter :ngpu.AdapterBase) :void=
   l.info ":: \"Best\" limits supported by the adapter initialized on this system:"
   var sup :SupportedLimits
   discard adapter.ct.get(sup.addr)
-  l.info ": adapter.maxVertexAttributes: ",sup.limits.maxVertexAttributes
+  for name,limit in sup.limits.fieldPairs:
+    l.info ": adapter.",name,": ",limit
 #___________________
 proc reportFeatures (adapter :ngpu.AdapterBase) :void=
   l.info ":: WGPU Features supported by this system: "

@@ -1,5 +1,5 @@
 # ngpu : Native WebGPU library in Nim
-Rendering library, targeting the design concepts of the WebGPU API.  
+Rendering library, targeting the design concepts of WebGPU-native.  
 Don't be fooled by the `web` part.  
 This project's target is native gpu usage.  
 
@@ -13,7 +13,7 @@ Not agnostic. Technically a renderer:
 - Doesn't try to be agnostic or generalistic.  
 - One single purpose: Tools to create a good modern renderer.  
 
-Note: Modern means 2015+ hardware, not 2000's version of "modern".  
+_Note: Modern means 2015+ hardware, not 2000's version of "modern"._  
 _Not looking at you, opengl3..._  
 
 Not reinventing the wheel:  
@@ -35,6 +35,7 @@ Each example is incrementally more complex than the previous one.
 The basic examples follow the structure of [Learn WebGPU C++](https://eliemichel.github.io/LearnWebGPU/), which I highly recommend for learning the WebGPU-based APIs.  
 The advanced ones are modeled after the [webgpu-native-examples](https://github.com/samdauwe/webgpu-native-examples#Basics) repository.
 
+
 ### Configurability
 ngpu is very configurable, as long as you use the provided tools/paradigms.
 
@@ -46,6 +47,11 @@ You can see a list of the implied defaults @[config.md](doc/config.md) doc file.
 All of the initializer variables have customizable inputs, with sane defaults for when they are omitted.
 Also, all of the elements have a `Type.new( ... )` function, that takes as many options as its technically possible to do so within the bounds of the library.  
 If you create your own functions to do the rendering logic, you can customize basically everything.  
+
+#### Custom Shaders
+Shader uniforms are allowed to be custom types.  
+You only need to register them using the provided ngpu function for it, and the variable and its data will be accesible in your shader code.
+A more in-depth explanation can be found @[shaders.md](./doc/shaders.md) doc file.  
 
 #### Custom Techniques
 Every Rendering style has a unique set of properties and requirements _(what this lib calls a `Technique`)_.

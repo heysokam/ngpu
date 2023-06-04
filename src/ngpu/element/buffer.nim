@@ -24,11 +24,11 @@ proc new *[T](_:typedesc[ngpu.Buffer[T]];
     usage  : BufferUsageFlags;
     device : ngpu.Device;
     mapped : bool = false;
-    label  : str  = &"ngpu | {$type(T)} Buffer"
+    label  : str  = "ngpu | Buffer"
   ) :ngpu.Buffer[T]=
   new result
   result.data  = data
-  result.label = label
+  result.label = label & &" {$T}"
   result.cfg   = BufferDescriptor(
     nextInChain      : nil,
     label            : result.label.cstring,
@@ -43,10 +43,10 @@ proc new *[T](_:typedesc[ngpu.Buffer[T]];
     size   : SomeInteger;
     device : ngpu.Device;
     mapped : bool = false;
-    label  : str  = &"ngpu | {$type(T)} Buffer"
+    label  : str  = "ngpu | Buffer";
   ) :ngpu.Buffer[T]=
   new result
-  result.label = label
+  result.label = label & &" {$T}"
   result.cfg   = BufferDescriptor(
     nextInChain      : nil,
     label            : result.label.cstring,
@@ -69,6 +69,7 @@ proc term *[T](trg :var ngpu.Buffer[T]) :void=  trg.ct.destroy()
 #__________________
 proc upload *[T](queue :ngpu.Queue; data :pointer; buf :ngpu.Buffer[T]; Tsize :SomeInteger= 0; offset :SomeInteger= 0) :void {.inline.}=
   ## Queues a command to upload the given CPU.data pointer to the given GPU buffer.
+  ##
   ## Tsize is taken from buf.cfg.size when omitted (or 0).
   ## Will start writing at offset 0 when ommited (aka from the start of the buffer).
   ## Inline alias to wgpu.writeBuffer()
@@ -81,6 +82,7 @@ proc upload *[T](queue :ngpu.Queue; data :pointer; buf :ngpu.Buffer[T]; Tsize :S
 #__________________
 proc upload *[T :not seq](device :ngpu.Device; buf :ngpu.Buffer[T]; Tsize :SomeInteger= 0; offset :SomeInteger= 0) :void=
   ## Queues a command to upload the CPU.data of the buffer into its GPU.data,
+  ##
   ## Tsize is taken from buf.cfg.size when omitted (or 0).
   ## Will start writing at offset 0 when ommited (aka from the start of the buffer).
   ##
@@ -89,12 +91,13 @@ proc upload *[T :not seq](device :ngpu.Device; buf :ngpu.Buffer[T]; Tsize :SomeI
   device.queue.upload(
     data   = buf.data.addr,
     buf    = buf,
-    Tsize  = if Tsize == 0: buf.cfg.size.csize_t else: Tsize.csize_t,
-    offset = offset,
+    Tsize  = if Tsize == 0: buf.cfg.size.uint64 else: Tsize.uint64,
+    offset = offset.uint64,
     )
 #__________________
 proc upload *[T :seq](device :ngpu.Device; buf :ngpu.Buffer[T]; Tsize :SomeInteger= 0; offset :SomeInteger= 0) :void=
   ## Queues a command to upload the CPU.data of the buffer to the GPU.
+  ##
   ## Tsize is taken from buf.cfg.size when omitted (or 0).
   ## Will start writing at offset 0 when ommited (aka from the start of the buffer).
   ##
