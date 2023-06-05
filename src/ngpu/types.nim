@@ -4,7 +4,8 @@
 # std dependencies
 import std/packedsets
 # External dependencies
-import pkg/chroma
+from   pkg/chroma import Color, color
+from   pkg/pixie  import Image
 # ndk dependencies
 import nstd/types  as base
 import nmath/types as m
@@ -16,6 +17,8 @@ from   wgpu        import nil
 #__________________
 export wgpu.BufferUsage
 export chroma.Color
+export chroma.ColorRGBX
+export pixie.Image
 
 #_______________________________________
 # ngpu: Constants
@@ -123,7 +126,7 @@ type Compute * = ref object of RootObj
 const DefaultMaxBindgroups * = 4     # from: https://docs.rs/wgpu-types/0.16.0/src/wgpu_types/lib.rs.html#912
 const DefaultMaxBindings   * = 640
 #_____________________________
-type BindingKind *{.pure.}= enum data, blck, sampler, tex, texStore
+type BindingKind *{.pure.}= enum data, blck, sampler, tex, texBlock
 type BindingID  * = range[0..DefaultMaxBindings-1]  ## Range of ids allowed for binding.
 type BindingIDs * = PackedSet[BindingID]            ## Contains the binding ids used by a binding group.
 type Group *{.pure.}= enum  # aka BindGroup id
@@ -166,14 +169,14 @@ type BindGroup * = ref object
   label    *:str
 type BindGroups * = array[Group, BindGroup]   ## Data of all the -real- BindGroups
 #__________________
-type DataBind * = ref object
+type Bind * = ref object
   group      *:Group        ## @group(id) where this Uniform is connected to.
   id         *:BindingID    ## @binding(id) where this Uniform is connected to.
   kind       *:BindingKind  ## Will always be `.data` for this object
   shape      *:BindingShape ## Shape of the RenderData connector
   ct         *:Binding      ## RenderData connector context
 #__________________
-type DataCode * = object
+type BindCode * = object
   vName      *:str          ## Name by which the variable will be accessed in shader code.
   tName      *:str          ## Type Name of the variable in wgsl code.
   define     *:str          ## wgsl code for its Type declaration
@@ -181,18 +184,72 @@ type DataCode * = object
 #__________________
 type RenderData *[T]= ref object
   # note: Called `Uniform` in other libraries. Same concept.
-  binding    *:DataBind    ## Binding data of the RenderData object
-  code       *:DataCode    ## wgsl Code that is generated to use the RenderData object
-  buffer     *:Buffer[T]   ## CPU and GPU data contents.
+  binding    *:Bind         ## Binding data of the RenderData object
+  code       *:BindCode     ## wgsl Code that is generated to use the RenderData object
+  buffer     *:Buffer[T]    ## CPU and GPU data contents.
   label      *:str
-type RenderBlock *[T]= distinct RenderData  ## Read+Write version of RenderData
   # note: Called `Shader Storage` in other libraries. Same concept.
 #__________________
-type Texture * = ref object
+type TexView * = ref object
+  ct     *:wgpu.TextureView
+  cfg    *:wgpu.TextureViewDescriptor
+  label  *:str
+#__________________
+type TexData * = ref object
+  binding  *:Bind           ## Binding data of the Texture object
+  code     *:BindCode       ## wgsl Code that is generated to use the Texture object
+  img      *:Image          ## Pixel Image data. Premultiplied, origin top-left
   ct       *:wgpu.Texture
-  view     *:wgpu.TextureView
+  cfg      *:wgpu.TextureDescriptor
+  view     *:TexView
   label    *:str
-# TODO: TextureBlock  (aka StorageTex)
+#__________________
+type WrapMode   * = wgpu.AddressMode
+type FilterMode * = wgpu.FilterMode
+type MipmapMode * = wgpu.MipmapFilterMode
+#__________________
+type Wrap * = object
+  u    *:WrapMode
+  v    *:WrapMode
+  w    *:WrapMode
+proc default *(_:typedesc[Wrap]) :Wrap=
+  Wrap(u: WrapMode.repeat, v: WrapMode.repeat, w: WrapMode.repeat)
+#__________________
+type LodClamp * = object
+  Min  *:float32
+  Max  *:float32
+proc default *(_:typedesc[LodClamp]) :LodClamp=
+  LodClamp(Min: 0, Max: 32)
+#__________________
+type Filter * = object
+  Min  *:FilterMode  ## Minification  Filter
+  mag  *:FilterMode  ## Magnification Filter
+  mip  *:MipmapMode  ## Mipmap Filter
+  lod  *:LodClamp    ## Min/Max LOD clamping
+  ani  *:uint16      ## Max Anisotropy
+proc default *(_:typedesc[Filter]) :Filter=
+  Filter(Min: FilterMode.linear, mag: FilterMode.linear, mip: MipmapMode.linear, lod: LodClamp.default(), ani: 1)
+#__________________
+type Sampler * = ref object
+  binding  *:Bind           ## Binding data of the Sampler object
+  code     *:BindCode       ## wgsl Code that is generated to use the Sampler object
+  ct       *:wgpu.Sampler
+  cfg      *:wgpu.SamplerDescriptor
+  label    *:str
+#__________________
+type Texture * = ref object
+  data   *:TexData
+  sampl  *:Sampler
+#__________________
+#[ TODO:
+type TexBlock * = distinct TexData   ## Read+Write version of TexData   (aka Storage Texture)
+type RenderBlock *[T]= distinct RenderData  ## Read+Write version of RenderData  (aka Storage Buffer)
+]#
+
+type SomeGpuType    * = float32 | uint32 | int32 | Vec2 | Vec3 | Vec4 | Color
+type SomeTexture    * = Image | Sampler
+type SomeShaderData * = RenderData | TexData | Texture
+
 #__________________
 const VertMain * = "vert"  ## Default name for the entry point of the vertex   shader
 const FragMain * = "frag"  ## Default name for the entry point of the fragment shader
@@ -239,7 +296,6 @@ type RenderTarget * = ref object
   of Target.Color:    discard
   of Target.ColorD:   depth         *:wgpu.RenderPassDepthStencilAttachment
   of Target.ColorDS:  depthStencil  *:wgpu.RenderPassDepthStencilAttachment
-  texture  *:Texture
   color    *:seq[wgpu.RenderPassColorAttachment]
   ct       *:wgpu.RenderPassEncoder
   cfg      *:wgpu.RenderPassDescriptor
@@ -272,4 +328,10 @@ converter toBool *(list :seq[wgpu.Feature]) :bool=  list.len > 0
   ## Automatically converts a list of wgpu.Features to bool when empty.
 converter toLimits *(lim :wgpu.Limits) :wgpu.RequiredLimits=  wgpu.RequiredLimits(nextInChain: nil, limits: lim)
   ## Automatically converts wgpu.RequiredLimits into wgpu.Limits
+converter toTexView *(dim :wgpu.TextureDimension) :wgpu.TextureViewDimension=
+  ## Automatically converts a TextureDimension to its respective TextureViewDimension.
+  case dim
+  of wgpu.TextureDimension.dim1D: wgpu.TextureViewDimension.dim1D
+  of wgpu.TextureDimension.dim2D: wgpu.TextureViewDimension.dim2D
+  of wgpu.TextureDimension.dim3D: wgpu.TextureViewDimension.dim3D
 

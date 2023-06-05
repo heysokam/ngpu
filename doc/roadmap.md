@@ -13,7 +13,7 @@
   - [x] wgsl codegen
   - [x] BindGroup management
 ## 0.0.4 : Textures
-- [ ] Hello Texture
+- [x] Hello Texture
 - [ ] Hello Sampled Texture
 ## 0.1.0 : 3D Rendering  (first publishable)
 - [ ] Depth attachment

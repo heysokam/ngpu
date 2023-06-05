@@ -18,7 +18,7 @@ proc reportLimits (adapter :ngpu.AdapterBase) :void=
   var sup :SupportedLimits
   discard adapter.ct.get(sup.addr)
   for name,limit in sup.limits.fieldPairs:
-    l.info ": adapter.",name,": ",limit
+    l.info ":   adapter.",name,": ",limit
 #___________________
 proc reportFeatures (adapter :ngpu.AdapterBase) :void=
   l.info ":: WGPU Features supported by this system: "

@@ -44,33 +44,6 @@ proc new *(_:typedesc[GroupShapes];
   result[Group.model]  = model
   result[Group.mesh]   = mesh
   result[Group.multi]  = multi
-#_______________________________________
-proc new *(_:typedesc[GroupShapes];
-    globalData : tuple;
-    device     : ngpu.Device;
-    label      : str = "ngpu | Group";
-  ) :GroupShapes=
-  ## Creates a new GroupShapes list, from the given tuple of Group.global RenderData objects.
-  ## WRN: `data` must be a tuple of RenderData[T]
-  assert globalData.isRenderData, "Tried to create a GroupShapes object, but one or more of the data inputs are not RenderData types."
-  var globalShapes :BindingShapes
-  var id :int
-  for name,it in globalData.fieldPairs:
-    doAssert id <= BindingID.high, "Tried to add more BindingShapes to Group.global than it is allowed per group."
-    assert it.hasBinding, "Tried to add a RenderData object to a group, but its binding (or one of its fields) is not initialized."
-    globalShapes[it.binding.id] = it.binding.shape
-    id.inc # << tuple id   (fieldPairs gives a (name,field) instead)
-  result = GroupShapes.new(
-    global   = GroupShape.new(
-      id     = Group.global,
-      shapes = globalShapes,
-      device = device,
-      label  = label&".global Shape",
-      ), # << global GroupShape.new( ... )
-    model    = nil,
-    mesh     = nil,
-    multi    = nil,
-    ) # << GroupShapes.new( ... )
 
 #_______________________________________
 # BindGroup: Real

@@ -1,12 +1,12 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
 #:____________________________________________________
-include src/ngpu/nimble
+include src/ngpu/nimble  # TODO: Remove `src` before publishing
 
 #___________________
 # Package
 packageName   = "ngpu"
-version       = "0.0.0"
+version       = "0.0.3"
 author        = "sOkam"
 description   = "n* Graphics Library | WebGPU"
 license       = "MIT"
@@ -36,4 +36,12 @@ task triangle, " Example 02:  hello triangle"                   : runExample "e0
 task buffer, "   Example 03:  hello buffer"                     : runExample "e03_hellobuffer"
 task triangle4, "Example 07:  indexed multi-buffered triangle." : runExample "e07_trianglebuffered3"
 task struct, "   Example 09:  uniform struct."                  : runExample "e09_uniformstruct"
+# task dynamic, "  Example 10:  uniform struct."                  : runExample "e10_dynamicuniform"
+task texture, "  Example 11:  simple pixie texture."            : runExample "e11_hellotexture"
+# task texture2, " Example 12:  sampled pixie texture."           : runExample "e12_sampledtexture"
+# task depth, "    Example 13:  simple depth buffer attachment."  : runExample "e13_hellodepth"
+# task camera, "   Example 14:  simple 3D camera controller."     : runExample "e14_hellocamera"
+# task uvs, "      Example 15:  cube textured using its UVs."     : runExample "e15_cubetextured"
+# task instance, " Example 16:  cube instanced 100 times."        : runExample "e16_cubeinstanced"
+# task multimesh, "Example 16:  multi-mesh. cubes + pyramid."     : runExample "e17_multimesh"
 

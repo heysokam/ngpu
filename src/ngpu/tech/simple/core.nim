@@ -12,16 +12,19 @@ import ../../element/target
 import ../../element/window
 import ../../element/binding/group
 import ../../element/binding/entry
+import ../../element/tuples
 # Tech dependencies
 import ../shared/types as simple
 import ../shared/mesh
 import ../shared/data
+import ../shared/texture
 import ./pipeline
 import ./shader
 
 # Required exports
 export mesh.new
 export data.new
+export texture.new
 
 #___________________
 proc initPass  (render :var Renderer; shader :Shader; shapes :GroupShapes; binds :Bindings) :RenderPass=
@@ -92,7 +95,9 @@ proc simple *(r :var Renderer; mesh :RenderMesh; tech :var RenderTech) :void=
   # Create the RenderTarget
   tech.phase[0].pass[0].trg = RenderTarget.new(
     swapChain = r.swapChain,
-    queue     = r.device.queue,  )
+    queue     = r.device.queue,
+    label     = r.label&" RenderTarget : Tech.Simple.phase[0].pass[0]",
+    ) # << RenderTarget.new( ... )
   # Draw into the texture with the given settings
   wgpu.set(
     renderPass = tech.phase[0].pass[0].trg.ct,

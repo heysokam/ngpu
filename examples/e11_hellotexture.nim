@@ -50,7 +50,7 @@ var img = Image(width:512, height:512, data:pix)
 #__________________
 const shaderCode = """
 // NEW: We now have access to the texture in the fragment stage, with the name that we specify  (aka "tex").
-// The Uniforms struct variable "u" will be available in the shader.
+// The Uniforms struct variable "u" will also be available in the shader.
 
 struct VertIn {
   @builtin(vertex_index) id :u32,

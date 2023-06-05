@@ -4,17 +4,18 @@
 # External dependencies
 import wgpu
 # ndk dependencies
-import nstd/types        as base
-import nmath/types       as m
-from   nglfw             as glfw import nil
+import nstd/types         as base
+import nmath/types        as m
+from   nglfw              as glfw import nil
 # ngpu dependencies
-import ../types          as ngpu
+import ../types           as ngpu
 import ../elements
-import ../element/window as w
-import ../element/buffer as buf
-import ../callbacks      as cb
-import ../tool/logger    as l
-import ../element/log    as lg
+import ../element/window  as w
+import ../element/buffer  as buf
+import ../element/texture as tex
+import ../callbacks       as cb
+import ../tool/logger     as l
+import ../element/log     as lg
 
 
 #___________________
@@ -61,13 +62,23 @@ proc submitQueue *(r :var Renderer) :void=  r.submitQueueLabeled(r.label&" | Com
 
 #___________________
 proc upload *[T](render :Renderer; trg :var RenderData[T]) :void=
-  ## Uploads the data currently contained in the buffer of the given RenderData object.
+  ## Queues an upload operation to copy the data currently contained in the buffer of the given RenderData object into the GPU.
   render.device.upload(trg.buffer)
+proc upload *(render :Renderer; trg :var TexData) :void=
+  ## Queues an upload operation to copy the current image of the given TexData object into the GPU.
+  render.device.upload(trg)
+
 #___________________
 proc update *[T](render :Renderer; trg :var RenderData[T]; data :T) :void=
   ## Updates the given `trg` RenderData with the given input `data`.
   ## Queues an upload operation to send the data to the GPU.
   trg.buffer.data = data
+  render.upload(trg)
+#___________________
+proc update *(render :Renderer; trg :var TexData; img :Image) :void=
+  ## Updates the given `trg` TexData with the given input `img`.
+  ## Queues an upload operation to send the image to the GPU.
+  trg.img = img
   render.upload(trg)
 
 

@@ -3,8 +3,6 @@
 #:____________________________________________________
 # std dependencies
 import std/strformat
-# External dependencies
-import wgpu
 # ndk dependencies
 import nstd/types  as base
 # ngpu dependencies

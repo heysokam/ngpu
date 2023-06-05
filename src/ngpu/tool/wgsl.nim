@@ -30,16 +30,18 @@ proc toWgpu (tname :string) :string=
   of "Vec3":    "vec3<f32>"
   of "Vec4":    "vec4<f32>"
   of "Color":   "vec4<f32>"
+  of "Image":   "texture_2d<f32>"
+  of "Sampler": "sampler"
   else: tname
 
 
 #_______________________________________
 # Validation: GPU types
 #_____________________________
-type SomeGpuType = float32 | uint32 | int32 | Vec2 | Vec3 | Vec4 | Color
 proc onlyGpuValues (T :typedesc) :bool=
   ## Checks that all fields of the type are GPU valid types.
-  when T is object:
+  when T is SomeTexture: return true
+  elif T is object:
     for field in default(T).fields:
       when field isnot SomeGpuType: return false
   elif T isnot SomeGpuType: return false
@@ -74,9 +76,19 @@ proc genType (T :typedesc) :string=
     let fName = field.name
     result.add &"{tab}{fName} :{fType},\n"
   result.add "}\n"
+#_____________________________
+proc genVariable (T :typedesc; gid,bid :int; space,varName :string) :string=
+  ## Returns the wgsl code for a variable of type `T` and name `varName`, using the address `space`.
+  let tName = ($T).toWgpu
+  &"@group({$gid}) @binding({$bid}) var{space} {varName} :{tName};\n"
+#_____________________________
+proc genDataVar (T :typedesc; gid,bid :int; varName :string) :string=
+  ## Returns the wgsl code for a Data variable of type `T` and name `varName`.
+  result = T.genVariable(gid,bid, "<uniform>", varName)
+#_____________________________
 proc genVar (T :typedesc; gid,bid :int; varName :string) :string=
   ## Returns the wgsl code for a variable of type `T` and name `varName`.
-  &"@group({$gid}) @binding({$bid}) var<uniform> {varName} :{$T};\n"
+  result = T.genVariable(gid,bid, "", varName)
 
 #_______________________________________
 # Generation: Nim Variable to wgsl RenderData code
@@ -87,12 +99,19 @@ proc renderdata (T :typedesc; gid,bid :int; varName :string) :tuple[tcode: strin
   when T is SomeGpuType: result.tcode = NoTypeCode
   when T is object:
     result.tcode = T.genType
-  result.vcode = T.genVar(gid,bid,varName)
+  result.vcode = T.genDataVar(gid,bid,varName)
 #_____________________________
-proc renderdata *[T](t :T; gid,bid :int; varName :string= "") :tuple[tcode: string, vcode: string]=
+proc renderdata *[T](t :T; gid,bid :int; varName :string) :tuple[tcode: string, vcode: string]=
   ## Returns a string of Uniform wgsl code for the variable `t`.
-  t.typeof.renderdata(gid,bid, if varName == "": t.name else: varName)
-
+  t.typeof.renderdata(gid,bid, varName)
+#_____________________________
+proc texdata *(_:TexData|Image; gid,bid :int; varName :string) :tuple[tcode: string, vcode: string]=
+  result.tcode = NoTypeCode
+  result.vcode = Image.genVar(gid,bid, varName)
+#_____________________________
+proc sampler *(_:Sampler; gid,bid :int; varName :string) :tuple[tcode: string, vcode: string]=
+  result.tcode = NoTypeCode
+  result.vcode = Sampler.genVar(gid,bid, varName)
 
 
 

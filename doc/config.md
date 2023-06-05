@@ -3,6 +3,10 @@ Preset configuration values:
 # Device
 powerPreference       : highPerformance
 forceFallbackAdapter  : false
+
+# Image Textures
+format  : Premultiplied uint8  (aka chroma.ColorRGBX)
+origin  : Top-Left
 ```
 
 When not explicitely initialized, defaults for the elements will be:

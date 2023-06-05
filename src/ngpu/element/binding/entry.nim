@@ -28,6 +28,7 @@ proc new *(_:typedesc[BindingShape];
   var texture  :TextureBindingLayout
   var texStore :StorageTextureBindingLayout
   case kind
+  # RenderData
   of BindingKind.data:
     buffer = BufferBindingLayout(
       nextInChain      : nil,
@@ -38,16 +39,41 @@ proc new *(_:typedesc[BindingShape];
     sampler  = SamplerBindingLayout()
     texture  = TextureBindingLayout()
     texStore = StorageTextureBindingLayout()
-  # TODO: Support for Samplers and Textures
-  of BindingKind.blck:      raise newException(InitError, "RenderBlock BindingEntry support is not implemented.")
-  of BindingKind.sampler:   raise newException(InitError, "Sampler BindingEntry support is not implemented.")
-  of BindingKind.tex:       raise newException(InitError, "Texture BindingEntry support is not implemented.")
-  of BindingKind.texStore:  raise newException(InitError, "StorageTexture BindingEntry support is not implemented.")
+  # Texture
+  # TODO: Support for Custom Properties
+  #     :   Sample Type (float, sint, uint, etc)
+  #     :   TextureDimension  (1D and 3D)
+  of BindingKind.tex:
+    buffer   = BufferBindingLayout()
+    sampler  = SamplerBindingLayout(
+      nextInChain   : nil,
+      typ           : SamplerBindingType.nonFiltering,  # Set filter to none for Textures
+      ) # << sampler
+    texture  = TextureBindingLayout(
+      nextInChain   : nil,
+      sampleType    : TextureSampleType.Float,    # Set the color type to float
+      viewDimension : TextureViewDimension.dim2D, # Make it a 2D texture
+      multisampled  : false,
+      ) # << texture
+    texStore = StorageTextureBindingLayout()
+  # Sampler
+  of BindingKind.sampler:
+    buffer  = BufferBindingLayout()
+    sampler = SamplerBindingLayout(
+      nextInChain : nil,
+      typ         : SamplerBindingType.filtering,  # Set filtering
+      ) # << sampler
+    texture  = TextureBindingLayout()
+    texStore = StorageTextureBindingLayout()
+    raise newException(InitError, "Sampler BindingShape support is not implemented.")
+  # TODO: Support for StorageTexture and StorageBuffer
+  of BindingKind.blck:      raise newException(InitError, "RenderBlock BindingShape support is not implemented.")
+  of BindingKind.texBlock:  raise newException(InitError, "TexBlock BindingShape support is not implemented.")
   # Apply to the result
   new result
   result.label = label & &" {$T}"
   result.id    = bindID
-  result.ct    = BindGroupLayoutEntry(  # Uniform Layout Entry starts here
+  result.ct    = BindGroupLayoutEntry(
     nextInChain    : nil,
     binding        : result.id.uint32,  # Shader @binding(id) index
     visibility     : usage,             # Default: Used in both vertex and fragment stages
@@ -75,24 +101,30 @@ proc new *[T](_:typedesc[Binding];
   result.texView = nil
 #___________________
 proc new *(_:typedesc[Binding];
-    tex : ngpu.Texture;
+    tex : ngpu.TexData;
     id  : BindingID;
   ) :Binding=
+  ## Creates a new binding for the given Texture.
   new result
-  ## Creates a new binding for the given Texture
   result.id      = id
   result.bufCt   = nil
   result.bufOffs = 0
   result.bufSize = 0
-  result.sampler = tex.sampler
-  result.texView = tex.view
+  result.sampler = nil
+  result.texView = tex.view.ct
 #___________________
-proc new *(_:typedesc[Bindings];
-    data : tuple;
-  ) :Bindings=
-  ## Returns the list of Bindings of the given tuple of RenderData objects.
-  assert data.isRenderData, "Tried to create a Bindings list, but one or more of the data inputs are not RenderData types."
-  for it in data.fields: result[it.binding.id] = it.binding.ct
+proc new *(_:typedesc[Binding];
+    sampler : ngpu.Sampler;
+    id      : BindingID;
+  ) :Binding=
+  ## Creates a new binding for the given Sampler.
+  new result
+  result.id      = id
+  result.bufCt   = nil
+  result.bufOffs = 0
+  result.bufSize = 0
+  result.sampler = sampler.ct 
+  result.texView = nil
 
 
 #_______________________________________
@@ -113,9 +145,9 @@ proc toWgpu *(bindings :Bindings) :seq[wgpu.BindGroupEntry]=
       binding     : entry.id.uint32,  # Shader @binding(id) index
       buffer      : entry.bufCt,      # Buffer that contains the data for this binding
       offset      : entry.bufOffs,    # Offset within the buffer (useful for storing multiple blocks in the same buffer)
-      size        : entry.bufSize,
-      sampler     : entry.sampler,
-      textureView : entry.texView,
+      size        : entry.bufSize,    # Size of the buffer, when its relevant
+      sampler     : entry.sampler,    # Sampler context
+      textureView : entry.texView,    # TextureView context
       ) # << BindGroupEntry( ... )
 
 

@@ -17,6 +17,8 @@ export Type.RenderMesh
 import ./tech/shared/mesh
 export mesh.new
 export mesh.upload
+import ./tech/shared/texture
+export texture.new
 #___________________
 import ./tech/clear
 import ./tech/triangle

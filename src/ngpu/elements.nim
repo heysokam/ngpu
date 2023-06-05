@@ -11,4 +11,5 @@ import ./element/swapchain as ngpuSwapchain ; export ngpuSwapchain
 import ./element/window    as ngpuWindow    ; export ngpuWindow
 import ./element/shader    as ngpuShader    ; export ngpuShader
 import ./element/buffer    as ngpuBuffer    ; export ngpuBuffer
+import ./element/texture   as ngpuTexture   ; export ngpuTexture
 

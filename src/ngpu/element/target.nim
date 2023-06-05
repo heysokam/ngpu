@@ -3,6 +3,8 @@
 #:____________________________________________________
 # External dependencies
 import wgpu
+# ndk dependencies
+import nstd/types    as base
 # ngpu dependencies
 import ../types      as ngpu
 import ../tool/color as c
@@ -13,9 +15,11 @@ proc new *(_:typedesc[RenderTarget];
     swapChain : ngpu.Swapchain;
     queue     : ngpu.Queue;
     clear     : ngpu.Color = ColorClear;
+    label     : str = "ngpu | RenderTarget";
   ) :RenderTarget=
   ## Creates a RenderTarget with a single Color attachment
   result       = RenderTarget(kind: Target.Color)
+  result.label = label
   result.color = @[RenderPassColorAttachment(
     view                   : swapChain.view,
     resolveTarget          : nil,
@@ -26,7 +30,7 @@ proc new *(_:typedesc[RenderTarget];
   # Create the RenderTarget
   result.cfg = RenderPassDescriptor(
     nextInChain            : nil,
-    label                  : nil,
+    label                  : result.label.cstring,
     colorAttachmentCount   : result.color.len.uint32,
     colorAttachments       : result.color[0].addr,
     depthStencilAttachment : nil,
