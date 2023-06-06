@@ -247,7 +247,7 @@ type RenderBlock *[T]= distinct RenderData  ## Read+Write version of RenderData 
 ]#
 
 type SomeGpuType    * = float32 | uint32 | int32 | Vec2 | Vec3 | Vec4 | Color
-type SomeTexture    * = Image | Sampler
+type SomeTexture    * = TexData | Image | Sampler
 type SomeShaderData * = RenderData | TexData | Texture
 
 #__________________

@@ -1,11 +1,9 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
 #:____________________________________________________
-# Single Texture example                              |
-# Our byte array can be accessed from the shader.     |
-# The position is fixed to the topleft of the screen  |
-# Triangle UVs are not used in this example           |
-#_____________________________________________________|
+# Sampled Texture example                         |
+# Our byte array can be sampled from the shader.  |
+#_________________________________________________|
 # std dependencies
 import std/sequtils
 # ndk dependencies
@@ -45,12 +43,13 @@ var u = Uniforms(
   color : color(0,1,0,1),
   ) # << Uniforms( ... )
 # Generate a fully white Image for the texture
-let pix = newSeqWith[ColorRGBX](512*512, color(1,1,1,1).rgbx())
+let pix = newSeqWith[ColorRGBX](512*512, color(0,1,1,1).rgbx())
 var img = Image(width:512, height:512, data:pix)
 #__________________
 const shaderCode = """
-// NEW: We now have access to the texture in the fragment stage, with the name that we specify  (aka "tex").
-// The Uniforms struct variable "u" will be available in the shader.
+// NEW: We now have access to the sampler in the fragment stage, with the name that we specify  (aka "texSampler")
+// We have access to the texture in the fragment stage, with the name that we specify  (aka "tex").
+// The Uniforms struct variable "u" will also be available.
 
 struct VertIn {
   @builtin(vertex_index) id :u32,
@@ -79,8 +78,7 @@ struct VertOut {
 }
 
 @fragment fn frag(in :VertOut) ->@location(0) vec4<f32> {
-  // return vec4<f32>(u.color.r, u.color.g, u.color.b, in.color.a);
-  return textureLoad(tex, vec2<i32>(in.pos.xy), 0);
+  return textureSample(tex, texSampler, in.uv);  // NEW: We now sample the texture directly
 }
 """
 
@@ -90,20 +88,20 @@ import ngpu/tech/shared/data # TODO: This should be imported auto, but missing R
 # Entry Point
 #__________________
 proc run=
-  echo "ngpu | Hello Uniform"
+  echo "ngpu | Hello Texture"
   #__________________
   # Init a new Renderer
   e.render = Renderer.new(
-    title  = "ngpu | Hello Uniform",
+    title  = "ngpu | Hello Texture",
     label  = "ngpu",
     res    = cfg.res,
     key    = key,
     ) # << state.render.init()
   #__________________
   # Init the Data, Mesh and Technique
-  var texture  = e.render.new(TexData, img, "tex")           # Create the TexData (no sampler)
-  var uniform  = e.render.new(RenderData[Uniforms], u, "u")  # Create the RenderData  (aka uniform)
-  var triangle = e.render.new(RenderMesh, gen.triangle())    # Create the RenderMesh
+  var texture  = e.render.new(Texture, img, "tex", "texSampler")  # Create the Texture     (sampled with default settings)
+  var uniform  = e.render.new(RenderData[Uniforms], u, "u")       # Create the RenderData  (aka uniform)
+  var triangle = e.render.new(RenderMesh, gen.triangle())         # Create the RenderMesh
   var tech     = e.render.init(Tech.Simple,
     code = shaderCode,
     data = (uniform,texture).mvar, # The simple tech only accepts a tuple of Group.global data

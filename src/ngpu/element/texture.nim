@@ -23,6 +23,25 @@ texture.multisampled  : false,
 ]##
 
 
+#_____________________________
+# Texture: Validate
+#__________________
+proc hasBinding *(src :TexData | ngpu.Sampler) :bool=  not src.binding.empty
+  ## Checks that the given TexData or Sampler object has a correct binding initialized.
+proc hasBinding *(tex :ngpu.Texture) :bool=  not tex.data.binding.empty and not tex.data.binding.empty
+  ## Checks that both the data and sampler of the given Texture object have a correct binding initialized.
+proc hasCode *(src :TexData | ngpu.Sampler) :bool=  src.code.hasCode
+  ## Checks if the code of the given TexData or Sampler object has been initialized.
+  ## Code is considered uninitialized if at least one of the fields is empty.
+proc hasCode *(tex :ngpu.Texture) :bool=  tex.data.code.hasCode and tex.sampl.code.hasCode
+  ## Checks if the code for both the data and sampler of the given Texture object have been initialized.
+  ## Code is considered uninitialized if at least one of the fields is empty.
+proc registered *(src :TexData | ngpu.Sampler) :bool=  src.hasBinding and src.hasCode
+  ## Returns true if the given TexData or Sampler object has already been registered.
+proc registered *(tex :ngpu.Texture) :bool=  tex.data.hasBinding and tex.sampl.hasBinding and tex.data.hasCode and tex.sampl.hasCode
+  ## Returns true if both the data and Sampler of the given Texture object have already been registered.
+
+
 #_______________________________________
 # Management
 #___________________
@@ -72,6 +91,17 @@ proc initBinding *(sampler :var ngpu.Sampler;
     id      = sampler.binding.id,
     ) # << Binding.new( ... )
 #___________________
+proc initBinding *(tex :var ngpu.Texture;
+    gid   : Group;
+    bid   : BindingID;
+    usage : ShaderStageFlags = { ShaderStage.fragment };
+  ) :void=
+  ## Inititializes the Binding of both the data and sampler of the given Texture object.
+  ## When omitted, usage will be for the fragment stage only.
+  tex.data.initBinding(  gid, bid,   usage )
+  tex.sampl.initBinding( gid, bid+1, usage )
+
+#___________________
 proc upload *(device :ngpu.Device; tex :TexData) :void=
   ## Queues an upload operation to copy the given texture data to the GPU.
   # Create the Texture Copy arguments
@@ -97,6 +127,10 @@ proc upload *(device :ngpu.Device; tex :TexData) :void=
     dataLayout  = source.addr,
     writeSize   = tex.cfg.size.addr,
     ) # << queue.writeTexture( ... )
+#___________________
+proc upload *(device :ngpu.Device; tex :ngpu.Texture) :void=
+  ## Queues an upload operation to copy the data of the given texture to the GPU.
+  device.upload(tex.data)
 
 
 #_______________________________________
@@ -179,57 +213,92 @@ proc new *(_:typedesc[ngpu.Sampler];
     magFilter     : filter.mag,
     minFilter     : filter.Min,
     mipmapFilter  : filter.mip,
-    lodMinClamp   : filter.clamp.Min.cfloat,
-    lodMaxClamp   : filter.clamp.Max.cfloat,
+    lodMinClamp   : filter.lod.Min.cfloat,
+    lodMaxClamp   : filter.lod.Max.cfloat,
     compare       : CompareFunction.undefined,
     maxAnisotropy : filter.ani,
     ) # << SamplerDescriptor( ... )
   result.ct = device.ct.create(result.cfg.addr)
   # Require post-initialization of the binding
   result.binding = nil
+#___________________
+proc new *(_:typedesc[ngpu.Texture];
+    img         : Image;
+    device      : ngpu.Device;
+    textureName : str;
+    samplerName : str    = "";
+    wrap        : Wrap   = Wrap.default();
+    filter      : Filter = Filter.default();
+    upload      : bool   = false;
+    label       : str    = "ngpu | Texture";
+  ) :ngpu.Texture=
+  ## Creates a new sampled Texture, by creating its data and sampler with the given inputs.
+  ## samplerName will be `textureName`Sampler when omitted.
+  new result
+  result.data = TexData.new(
+    img     = img,
+    varName = textureName,
+    device  = device,
+    upload  = upload,
+    label   = label&" Data",
+    ) # << TexData.new( ... )
+  result.sampl = ngpu.Sampler.new(
+    device  = device,
+    varName = if samplerName == "": textureName&"Sampler" else: samplerName,
+    wrap    = wrap,
+    filter  = filter,
+    label   = label&" Sampler",
+    ) # << Sampler.new( ... )
+
 
 #_____________________________
 # Code Generation
 #__________________
-proc genCode *(tex :TexData) :BindCode=
+proc genCode *(src :TexData | ngpu.Sampler) :BindCode=
   ## Generates the code for the given TexData object, and returns it as a BindCode object.
   ## The input object is not modified.
-  ## WRN: Expects tex.code to already contain a vName.
-  assert tex.code.vName != "", &"Tried to generate code for a TexData object, but its vName field is empty."
-  assert tex.binding != nil, &"Tried to generate code for a TexData object, but its binding is not initialized."
+  ## WRN: Expects src.code to already contain a vName.
+  assert src.code.vName != "", "Tried to generate code for a TexData or Sampler object, but its vName field is empty."
+  assert src.binding != nil,   "Tried to generate code for a TexData or Sampler object, but its binding is not initialized."
   result = BindCode.new(
-    data    = tex.img,
-    varName = tex.code.vName,
-    groupID = tex.binding.group,
-    bindID  = tex.binding.id,
+    data    = src,
+    varName = src.code.vName,
+    groupID = src.binding.group,
+    bindID  = src.binding.id,
     ) # << BindCode.new( ... )
+#___________________
+proc genCode *(src :ngpu.Texture) :tuple[data:BindCode, sampl:BindCode]=
+  ## Generates the code for both the data and sampler of the given TexData object, and returns it as a tuple of BindCode objects.
+  ## The contents of the input object are not modified.
+  ## WRN: Expects both src.data.code and src.sampl.code to already contain a vName.
+  result = (
+    data      : BindCode.new(
+      data    = src.data,
+      varName = src.data.code.vName,
+      groupID = src.data.binding.group,
+      bindID  = src.data.binding.id,
+      ), # << BindCode.new( ... )
+    sampl     : BindCode.new(
+      data    = src.sampl,
+      varName = src.sampl.code.vName,
+      groupID = src.sampl.binding.group,
+      bindID  = src.sampl.binding.id,
+      ) # << BindCode.new( ... )
+    ) # << result( ... )
+
 #___________________
 proc initCode *(src :var TexData | var ngpu.Sampler) :void=
   ## Initializes the code field for the given TexData or Sampler object.
   if src.hasCode: wrn "Generating shader code for a TexData object that already has it."
   src.code = src.genCode()
+proc initCode *(src :var ngpu.Texture) :void=
+  ## Initializes the code fields for both TexData and Sampler of the given Texture object.
+  src.data.initCode()
+  src.sampl.initCode()
+
 #___________________
 proc getCode *(src :TexData | ngpu.Sampler) :string=  src.code.variable
   ## Returns the block of wgsl code for the given TexData or Sampler object.
 proc getCode *(tex :ngpu.Texture) :string=  tex.data.getCode & tex.sampl.getCode
   ## Returns the block of wgsl code for the given TexData or Sampler object.
-
-
-#_____________________________
-# Texture: Validate
-#__________________
-proc hasBinding *(tex :TexData) :bool=  not tex.binding.empty
-  ## Checks that the given TexData object has a correct binding initialized.
-proc hasBinding *(sampler :ngpu.Sampler) :bool=  not sampler.binding.empty
-  ## Checks that the given Sampler object has a correct binding initialized.
-proc hasCode *(tex :TexData) :bool=  tex.code.hasCode
-  ## Checks if the code of the given TexData object has been initialized.
-  ## Code is considered uninitialized if at least one of the fields is empty.
-proc hasCode *(sampler :ngpu.Sampler) :bool=  sampler.code.hasCode
-  ## Checks if the code of the given Sampler object has been initialized.
-  ## Code is considered uninitialized if at least one of the fields is empty.
-proc registered *(tex :TexData) :bool=  tex.hasBinding and tex.hasCode
-  ## Returns true if the given TexData object has already been registered.
-proc registered *(sampler :ngpu.Sampler) :bool=  sampler.hasBinding and sampler.hasCode
-  ## Returns true if the given Sampler object has already been registered.
 

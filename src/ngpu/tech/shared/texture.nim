@@ -30,4 +30,25 @@ proc new *(render :Renderer;
     upload  = upload,
     label   = label,
     ) # << TexData.new( ... )
+#___________________
+proc new *(render :Renderer;
+    _           : typedesc[ngpu.Texture];
+    img         : Image;
+    textureName : str;
+    samplerName : str    = "";
+    wrap        : Wrap   = Wrap.default();
+    filter      : Filter = Filter.default();
+    upload      : bool   = false;
+    label       : str    = "ngpu | Texture";
+  ) :ngpu.Texture=
+  Texture.new(
+    img         = img,
+    device      = render.device,
+    textureName = textureName,
+    samplerName = samplerName,
+    wrap        = wrap,
+    filter      = filter,
+    upload      = upload,
+    label       = label,
+    ) # << Texture.new( ... )
 

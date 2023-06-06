@@ -97,7 +97,7 @@ proc run=
   var triangle = e.render.new(RenderMesh, gen.triangle())    # Create the RenderMesh
   var tech     = e.render.init(Tech.Simple,
     code = shaderCode,
-    data = (uniform,).mvar, # The simple tech only accepts a tuple of Group.global data
+    data = (uniform,).toData, # The simple tech only accepts a tuple of Group.global data
     ) # << Tech.Simple.init( ... )
   e.render.upload(triangle)
   e.render.upload(uniform)  # Explicit upload step. Could be done when creating the data (with upload = true)

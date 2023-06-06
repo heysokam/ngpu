@@ -61,11 +61,11 @@ proc submitQueue *(r :var Renderer) :void=  r.submitQueueLabeled(r.label&" | Com
   ## Submits the current state of the Queue to the GPU.
 
 #___________________
-proc upload *[T](render :Renderer; trg :var RenderData[T]) :void=
+proc upload *[T](render :Renderer; trg :RenderData[T]) :void=
   ## Queues an upload operation to copy the data currently contained in the buffer of the given RenderData object into the GPU.
   render.device.upload(trg.buffer)
-proc upload *(render :Renderer; trg :var TexData) :void=
-  ## Queues an upload operation to copy the current image of the given TexData object into the GPU.
+proc upload *(render :Renderer; trg :TexData | ngpu.Texture) :void=
+  ## Queues an upload operation to copy the current image of the given TexData or Texture object into the GPU.
   render.device.upload(trg)
 
 #___________________

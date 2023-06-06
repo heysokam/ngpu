@@ -65,7 +65,6 @@ proc new *(_:typedesc[BindingShape];
       ) # << sampler
     texture  = TextureBindingLayout()
     texStore = StorageTextureBindingLayout()
-    raise newException(InitError, "Sampler BindingShape support is not implemented.")
   # TODO: Support for StorageTexture and StorageBuffer
   of BindingKind.blck:      raise newException(InitError, "RenderBlock BindingShape support is not implemented.")
   of BindingKind.texBlock:  raise newException(InitError, "TexBlock BindingShape support is not implemented.")

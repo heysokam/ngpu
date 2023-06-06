@@ -31,6 +31,7 @@ proc toWgpu (tname :string) :string=
   of "Vec4":    "vec4<f32>"
   of "Color":   "vec4<f32>"
   of "Image":   "texture_2d<f32>"
+  of "TexData": "texture_2d<f32>"
   of "Sampler": "sampler"
   else: tname
 
@@ -105,14 +106,9 @@ proc renderdata *[T](t :T; gid,bid :int; varName :string) :tuple[tcode: string, 
   ## Returns a string of Uniform wgsl code for the variable `t`.
   t.typeof.renderdata(gid,bid, varName)
 #_____________________________
-proc texdata *(_:TexData|Image; gid,bid :int; varName :string) :tuple[tcode: string, vcode: string]=
+proc texdata *(t :TexData|Image|Sampler; gid,bid :int; varName :string) :tuple[tcode: string, vcode: string]=
   result.tcode = NoTypeCode
-  result.vcode = Image.genVar(gid,bid, varName)
-#_____________________________
-proc sampler *(_:Sampler; gid,bid :int; varName :string) :tuple[tcode: string, vcode: string]=
-  result.tcode = NoTypeCode
-  result.vcode = Sampler.genVar(gid,bid, varName)
-
+  result.vcode = t.type.genVar(gid,bid, varName)
 
 
 

@@ -14,7 +14,7 @@
   - [x] BindGroup management
 ## 0.0.4 : Textures
 - [x] Hello Texture
-- [ ] Hello Sampled Texture
+- [x] Hello Sampled Texture
 ## 0.1.0 : 3D Rendering  (first publishable)
 - [ ] Depth attachment
 - [ ] Hardcoded mesh (Textured Cube)
@@ -68,7 +68,7 @@
 - [x] Triangle
 - [ ] Square
 - [ ] Two cubes
-- [ ] Bind groups
+- [x] Bind groups
 - [ ] Dynamic uniform buffers
 - [ ] Texture mapping
 - [ ] Textured cube

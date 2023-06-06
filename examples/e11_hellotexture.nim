@@ -90,11 +90,11 @@ import ngpu/tech/shared/data # TODO: This should be imported auto, but missing R
 # Entry Point
 #__________________
 proc run=
-  echo "ngpu | Hello Uniform"
+  echo "ngpu | Hello TexData"
   #__________________
   # Init a new Renderer
   e.render = Renderer.new(
-    title  = "ngpu | Hello Uniform",
+    title  = "ngpu | Hello TexData",
     label  = "ngpu",
     res    = cfg.res,
     key    = key,
@@ -106,7 +106,7 @@ proc run=
   var triangle = e.render.new(RenderMesh, gen.triangle())    # Create the RenderMesh
   var tech     = e.render.init(Tech.Simple,
     code = shaderCode,
-    data = (uniform,texture).mvar, # The simple tech only accepts a tuple of Group.global data
+    data = (uniform,texture).toData, # The simple tech only accepts a tuple of Group.global data
     ) # << Tech.Simple.init( ... )
   e.render.upload(triangle)
   # Explicit upload step. Could be done when creating the objects (with upload = true)
