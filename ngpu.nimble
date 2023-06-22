@@ -39,9 +39,9 @@ task struct, "   Example 09:  uniform struct."                  : runExample "e0
 # task dynamic, "  Example 10:  uniform struct."                  : runExample "e10_dynamicuniform"
 task texture, "  Example 11:  simple pixel texture."            : runExample "e11_hellotexture"
 task texture2, " Example 12:  sampled pixel texture."           : runExample "e12_sampledtexture"
-# task depth, "    Example 13:  simple depth buffer attachment."  : runExample "e13_hellodepth"
+task depth, "    Example 13:  simple depth buffer attachment."  : runExample "e13_hellodepth"
 # task camera, "   Example 14:  simple 3D camera controller."     : runExample "e14_hellocamera"
 # task uvs, "      Example 15:  cube textured using its UVs."     : runExample "e15_cubetextured"
 # task instance, " Example 16:  cube instanced 100 times."        : runExample "e16_cubeinstanced"
-# task multimesh, "Example 16:  multi-mesh. cubes + pyramid."     : runExample "e17_multimesh"
+# task multimesh, "Example 17:  multi-mesh. cubes + pyramid."     : runExample "e17_multimesh"
 

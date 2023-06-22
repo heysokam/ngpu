@@ -5,7 +5,7 @@
 import std/strformat
 # ndk dependencies
 import nstd/types as base
-import nstd/C/address
+import nstd/address
 from   nglfw      as glfw import nil
 import nmath
 # ngpu dependencies

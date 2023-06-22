@@ -31,7 +31,7 @@ when not defined(debug):
 elif defined(debug):
   --undef:release
   --stacktrace:on
-  # --debugger:native
+  --debugger:native
   --passC:"-Og"    # Optimize for debugging
   --passC:"-g3"    # Debugging information level
   --passC:"-ggdb"  # Compile wigh gdb debug information specifically

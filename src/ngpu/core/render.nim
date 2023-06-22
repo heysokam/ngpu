@@ -29,7 +29,7 @@ proc present *(r :var Renderer) :void=  r.swapChain.ct.present()
 
 #___________________
 proc updateView *(r :var Renderer; attempts :int= 2) :void=
-  ## Returns the current texture view of the Swapchain.
+  ## Updates the texture view of the given Swapchain, based on the current window size.
   ## This is a fallible operation by spec, so we attempt multiple times (2x by default when omitted).
   for attempt in 0..<attempts:
     let prev = r.swapChain.getSize()

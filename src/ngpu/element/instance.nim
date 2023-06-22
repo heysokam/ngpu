@@ -15,7 +15,7 @@ proc new *(_:typedesc[ngpu.Instance];
   ) :ngpu.Instance=
   new result
   result.label = label
-  result.cfg   = wgpu.InstanceDescriptor(nextInChain: nil)
+  result.cfg   = wgpu.InstanceDescriptor(nextInChain: nil)  # TODO: wgpu extension for Backend Selection
   result.ct    = wgpu.create(result.cfg.addr)
   doAssert result.ct != nil, "Could not initialize the wgpu instance"
 

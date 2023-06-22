@@ -126,24 +126,24 @@ proc new *(_:typedesc[RenderMesh];
     ) # << device.createBuffer()
   result.inds  = MeshIndices[mesh.inds[0].type].new(
     data       = mesh.inds,
-    offset     = 0
+    offset     = 0,
     ) # << RenderMesh.inds
-  result.pos   = MeshAttribute[Vec3].new(
+  result.pos   = MeshAttribute[mesh.pos[0].type].new(
     kind       = Attr.pos,
     data       = mesh.pos,
     offset     = result.inds.offset + result.inds.size,
     ) # << RenderMesh.pos
-  result.color = MeshAttribute[ngpu.Color].new(
+  result.color = MeshAttribute[mesh.color[0].type].new(
     kind       = Attr.color,
     data       = mesh.color,
     offset     = result.pos.offset + result.pos.size,
     ) # << RenderMesh.color
-  result.uv    = MeshAttribute[Vec2].new(
+  result.uv    = MeshAttribute[mesh.uv[0].type].new(
     kind       = Attr.uv,
     data       = mesh.uv,
     offset     = result.color.offset + result.color.size,
     ) # << RenderMesh.uv
-  result.norm  = MeshAttribute[Vec3].new(
+  result.norm  = MeshAttribute[mesh.norm[0].type].new(
     kind       = Attr.norm,
     data       = mesh.norm,
     offset     = result.uv.offset + result.uv.size,

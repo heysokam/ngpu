@@ -29,9 +29,10 @@ proc get *(device :ngpu.Device;
     swapChain  : ngpu.Swapchain;
     label      : str= "ngpu | Tech.Simple Pipeline";
   ) :Pipeline=
-  var meshShape = Mesh.new(MeshShape)
-  var vlayout   = VertexShape.new(meshShape)
-  result        = Pipeline.new(
+  var meshShape    = Mesh.new(MeshShape)
+  var vlayout      = VertexShape.new(meshShape)
+  var depthStencil = pipeline.depth()
+  result           = Pipeline.new(
     shape           = PipelineShape.new(
       device        = device,
       label         = label&" Shape",
@@ -67,6 +68,7 @@ proc get *(device :ngpu.Device;
       ), # << fragment
     primitive    = PrimitiveState.default(),
     multisample  = MultisampleState.default(),
+    depthStencil = depthStencil.addr,
     label        = label,
     ) # << Pipeline.new( ... )
 

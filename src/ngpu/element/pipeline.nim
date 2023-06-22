@@ -15,28 +15,61 @@ import ./binding/group
 
 #_______________________________________
 proc default *(_:typedesc[PrimitiveState]) :PrimitiveState=
+  ## Creates a new PrimitiveState with the default values preferred by the lib.
   result = PrimitiveState(
     nextInChain      : nil,
     topology         : PrimitiveTopology.triangleList,
     stripIndexFormat : IndexFormat.undefined,
     frontFace        : FrontFace.ccw,
     cullMode         : CullMode.none,
-    ) # << primitive
+    ) # << PrimitiveState( ... )
 #_______________________________________
 proc default *(_:typedesc[MultisampleState]) :MultisampleState=
+  ## Creates a new MultisampleState with the default values preferred by the lib.
   result = MultisampleState(
     nextInChain            : nil,
     count                  : 1,
     mask                   : uint32.high,
     alphaToCoverageEnabled : false,
-    ) # << multisample
+    ) # << MultisampleState( ... )
 #_______________________________________
 proc default *(_:typedesc[BlendComponent]) :BlendComponent=
+  ## Creates a new BlendComponent with the default values preferred by the lib.
   result = BlendComponent(
     operation : BlendOperation.Add,
     srcFactor : BlendFactor.one,
     dstFactor : BlendFactor.zero,
-    ) # << BlendComponent()
+    ) # << BlendComponent( ... )
+#_______________________________________
+proc default *(_:typedesc[StencilFaceState]) :StencilFaceState=
+  ## Creates a new StencilFaceState with the default values preferred by the lib.
+  result = StencilFaceState(
+    compare     : CompareFunction.always, # This would be CompareFunction.undefined when Zero-Initalizated
+    failOp      : StencilOperation.keep,
+    depthFailOp : StencilOperation.keep,
+    passOp      : StencilOperation.keep,
+    ) # << StencilFaceState( ... )
+#_______________________________________
+proc depth *(
+    compare : CompareFunction = DefaultDepthCompare;
+    format  : TextureFormat   = DefaultDepthFormat;
+  ) :DepthStencilState=
+  ## Creates a new depth shape with no-stencil.
+  ## Will use their default values when omitted (stored at types.nim).
+  result = DepthStencilState(
+    nextInChain            : nil,
+    format                 : format,   # Assign the depth format to the pipeline
+    depthWriteEnabled      : true,     # If fragment passes the test, its depth is stored as the new value
+    depthCompare           : compare,  # Blend fragment if its depth is less/more than the current value of the z-buffer
+    # Not Used. Could be Zero-Initalizated instead of explicit.
+    stencilFront           : StencilFaceState.default(),
+    stencilBack            : StencilFaceState.default(),
+    stencilReadMask        : 0,  # Stencil disabled
+    stencilWriteMask       : 0,  # Stencil disabled
+    depthBias              : 0,
+    depthBiasSlopeScale    : 0.cfloat,
+    depthBiasClamp         : 0.cfloat,
+    ) # << depthStencil
 
 #_______________________________________
 proc new *(_:typedesc[PipelineShape];

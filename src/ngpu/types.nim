@@ -251,6 +251,9 @@ type SomeTexture    * = TexData | Image | Sampler
 type SomeShaderData * = RenderData | TexData | Texture
 
 #__________________
+const DefaultDepthFormat  * = wgpu.TextureFormat.Depth24Plus
+const DefaultDepthCompare * = wgpu.CompareFunction.less
+#__________________
 const VertMain * = "vert"  ## Default name for the entry point of the vertex   shader
 const FragMain * = "frag"  ## Default name for the entry point of the fragment shader
 const CompMain * = "comp"  ## Default name for the entry point of the compute  shader
@@ -291,11 +294,21 @@ else:
 #__________________
 type Target *{.pure.}= enum  Color, ColorD, ColorDS
 #__________________
+type Depth * = object
+  ct      *:wgpu.RenderPassDepthStencilAttachment
+  format  *:wgpu.TextureFormat
+  tex     *:wgpu.Texture
+  cfg     *:wgpu.TextureDescriptor
+  view    *:wgpu.TextureView
+  viewCfg *:wgpu.TextureViewDescriptor
+  label   *:str
+type DepthStencil * = Depth
+#__________________
 type RenderTarget * = ref object
   case kind*:Target
-  of Target.Color:    discard
-  of Target.ColorD:   depth         *:wgpu.RenderPassDepthStencilAttachment
-  of Target.ColorDS:  depthStencil  *:wgpu.RenderPassDepthStencilAttachment
+  of Target.Color:    discard       # Color targets are the base type. They don't have unique fields
+  of Target.ColorD:   depth         *:Depth
+  of Target.ColorDS:  depthStencil  *:DepthStencil
   color    *:seq[wgpu.RenderPassColorAttachment]
   ct       *:wgpu.RenderPassEncoder
   cfg      *:wgpu.RenderPassDescriptor

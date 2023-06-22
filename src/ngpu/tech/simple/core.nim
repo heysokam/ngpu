@@ -94,9 +94,17 @@ proc simple *(r :var Renderer; mesh :RenderMesh; tech :var RenderTech) :void=
   ## Executes the RenderPass of Tech.Simple.
   # Create the RenderTarget
   tech.phase[0].pass[0].trg = RenderTarget.new(
-    swapChain = r.swapChain,
-    queue     = r.device.queue,
-    label     = r.label&" RenderTarget : Tech.Simple.phase[0].pass[0]",
+    swapChain   = r.swapChain,
+    queue       = r.device.queue,
+    kind        = Target.ColorD,
+    # Including a new depth texture
+    depth       = Depth.new(
+      device    = r.device,
+      swapChain = r.swapChain,
+      format    = DefaultDepthFormat,
+      label     = r.label&" | RenderTarget : Tech.Simple.phase[0].pass[0].Depth"
+      ), # << Depth.new( ... )
+    label       = r.label&" | RenderTarget : Tech.Simple.phase[0].pass[0]",
     ) # << RenderTarget.new( ... )
   # Draw into the texture with the given settings
   wgpu.set(
@@ -107,7 +115,7 @@ proc simple *(r :var Renderer; mesh :RenderMesh; tech :var RenderTech) :void=
   tech.phase[0].pass[0].trg.set mesh
   for group in tech.phase[0].pass[0].binds:
     tech.phase[0].pass[0].trg.set group  # Set the `bindGroup` at @group(0), with no dynamic offsets (0, nil)
-  wgpu.draw(tech.phase[0].pass[0].trg.ct, mesh.indsCount, 1,0,0)  # instanceCount, firstVertex, firstInstance
+  wgpu.draw(tech.phase[0].pass[0].trg.ct, mesh.indsCount, 1,0,0,0)  # instanceCount, firstVertex, baseVertex, firstInstance
   # Finish the RenderPass : Clears the swapChain.view, and renders the commands we sent.
   wgpu.End(tech.phase[0].pass[0].trg.ct)
   wgpu.drop(r.swapChain.view)  # Required by wgpu-native. Not standard WebGPU
