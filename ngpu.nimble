@@ -24,10 +24,6 @@ requires "https://github.com/heysokam/nglfw"
 # requires "https://github.com/heysokam/wgpu"
 
 #___________________
-# ngpu specific nimble config
-skipdirs = @[binDir, examplesDir, testsDir, docDir]  # Tell nimble what folders to skip in the package
-
-#___________________
 task tut, "     Builds the latest/current wip tutorial app.":  runExample "tut"
 #___________________
 task hello, "    Example 00:  hello window+instance"            : runExample "e00_hellongpu"
@@ -40,8 +36,7 @@ task struct, "   Example 09:  uniform struct."                  : runExample "e0
 task texture, "  Example 11:  simple pixel texture."            : runExample "e11_hellotexture"
 task texture2, " Example 12:  sampled pixel texture."           : runExample "e12_sampledtexture"
 task depth, "    Example 13:  simple depth buffer attachment."  : runExample "e13_hellodepth"
-# task camera, "   Example 14:  simple 3D camera controller."     : runExample "e14_hellocamera"
-# task uvs, "      Example 15:  cube textured using its UVs."     : runExample "e15_cubetextured"
+task camera, "   Example 14:  simple 3D camera controller."     : runExample "e14_hellocamera"
 # task instance, " Example 16:  cube instanced 100 times."        : runExample "e16_cubeinstanced"
 # task multimesh, "Example 17:  multi-mesh. cubes + pyramid."     : runExample "e17_multimesh"
 

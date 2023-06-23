@@ -38,15 +38,16 @@ proc error *(code :int32; desc :cstring) :void {.cdecl, discardable.} =
 # General
 #__________________
 proc new *(_:typedesc[Window]; 
-    res         : UVec2;
-    title       : str;
-    resizable   : bool                    = true;
-    resize      : glfw.FrameBufferSizeFun = nil;
-    key         : glfw.KeyFun             = nil;
-    mousePos    : glfw.CursorPosFun       = nil;
-    mouseBtn    : glfw.MouseButtonFun     = nil;
-    mouseScroll : glfw.ScrollFun          = nil;
-    error       : glfw.ErrorFun           = error;
+    res          : UVec2;
+    title        : str;
+    resizable    : bool                    = true;
+    resize       : glfw.FrameBufferSizeFun = nil;
+    key          : glfw.KeyFun             = nil;
+    mousePos     : glfw.CursorPosFun       = nil;
+    mouseBtn     : glfw.MouseButtonFun     = nil;
+    mouseScroll  : glfw.ScrollFun          = nil;
+    mouseCapture : bool                    = true;
+    error        : glfw.ErrorFun           = error;
   ) :Window=
   ## Initializes and returns a new window with GLFW.
   discard glfw.setErrorCallback(error)
@@ -63,27 +64,29 @@ proc new *(_:typedesc[Window];
   discard glfw.setMouseButtonCallback(result.ct, mouseBtn)
   discard glfw.setScrollCallback(result.ct, mouseScroll)
   discard glfw.setFramebufferSizeCallback(result.ct, resize)  # Set viewport size/resize callback
+  if mouseCapture: glfw.setInputMode(result.ct, glfw.Cursor, glfw.CursorDisabled)
 
 #__________________
 template init *(win :var Window;
-    res         : UVec2;
-    title       : str;
-    resizable   : bool                    = true;
-    resize      : glfw.FrameBufferSizeFun = nil;
-    key         : glfw.KeyFun             = nil;
-    mousePos    : glfw.CursorPosFun       = nil;
-    mouseBtn    : glfw.MouseButtonFun     = nil;
-    mouseScroll : glfw.ScrollFun          = nil;
-    error       : glfw.ErrorFun           = error;
+    res          : UVec2;
+    title        : str;
+    resizable    : bool                    = true;
+    resize       : glfw.FrameBufferSizeFun = nil;
+    key          : glfw.KeyFun             = nil;
+    mousePos     : glfw.CursorPosFun       = nil;
+    mouseBtn     : glfw.MouseButtonFun     = nil;
+    mouseScroll  : glfw.ScrollFun          = nil;
+    mouseCapture : bool                    = true;
+    error        : glfw.ErrorFun           = error;
   ) :Window=
   ## Initializes and returns a new window with GLFW.
   ## Alias for win = Window.new( ... )
-  win = Window.new(res, title, resizable, resize, key, mousePos, mouseBtn, mouseScroll, error)
+  win = Window.new(res, title, resizable, resize, key, mousePos, mouseBtn, mouseScroll, mouseCapture, error)
 #__________________
 proc close  *(win :Window) :bool=  glfw.windowShouldClose(win.ct)
   ## Returns true when the GLFW window has been marked to be closed.
 proc term   *(win :Window) :void=  glfw.destroyWindow(win.ct); glfw.terminate()
   ## Terminates the GLFW window.
-proc update *(win :Window) :void=  glfw.pollEvents()
+proc update *(win :Window) :void=  discard
   ## Updates the window. Needs to be called each frame.
 

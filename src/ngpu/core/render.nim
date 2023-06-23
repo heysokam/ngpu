@@ -93,6 +93,7 @@ proc new *(_:typedesc[Renderer];
     mousePos       : glfw.CursorPosFun           = nil;
     mouseBtn       : glfw.MouseButtonFun         = nil;
     mouseScroll    : glfw.ScrollFun              = nil;
+    mouseCapture   : bool                        = true;
     error          : glfw.ErrorFun               = w.error;
     errorWGPU      : wgpu.ErrorCallback          = cb.error;
     logWGPU        : wgpu.LogCallback            = cb.log;
@@ -112,7 +113,7 @@ proc new *(_:typedesc[Renderer];
   result.label = label
   #__________________
   # Init Window
-  result.win = Window.new(res, title, resizable, resize, key, mousePos, mouseBtn, mouseScroll, error)
+  result.win = Window.new(res, title, resizable, resize, key, mousePos, mouseBtn, mouseScroll, mouseCapture, error)
   #__________________
   # Set wgpu.Logging
   lg.set(logLevel, logWGPU)  # TODO: set(info, wrn, err, fail)

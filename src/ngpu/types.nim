@@ -246,7 +246,7 @@ type TexBlock * = distinct TexData   ## Read+Write version of TexData   (aka Sto
 type RenderBlock *[T]= distinct RenderData  ## Read+Write version of RenderData  (aka Storage Buffer)
 ]#
 
-type SomeGpuType    * = float32 | uint32 | int32 | Vec2 | Vec3 | Vec4 | Color
+type SomeGpuType    * = float32 | uint32 | int32 | Vec2 | Vec3 | Vec4 | Mat4 | Color
 type SomeTexture    * = TexData | Image | Sampler
 type SomeShaderData * = RenderData | TexData | Texture
 

@@ -30,6 +30,7 @@ proc toWgpu (tname :string) :string=
   of "Vec3":    "vec3<f32>"
   of "Vec4":    "vec4<f32>"
   of "Color":   "vec4<f32>"
+  of "Mat4":    "mat4x4<f32>"
   of "Image":   "texture_2d<f32>"
   of "TexData": "texture_2d<f32>"
   of "Sampler": "sampler"

@@ -16,10 +16,10 @@
 - [x] Hello Texture
 - [x] Hello Sampled Texture
 ## 0.1.0 : 3D Rendering  (first publishable)
-- [ ] Depth attachment
-- [ ] Hardcoded mesh (Textured Cube)
-  - [ ] Flat
-  - [ ] Camera
+- [x] Depth attachment
+- [x] Hardcoded mesh (Textured Cube)
+  - [x] Flat
+  - [x] Camera
 - [ ] Multiple Hardcoded Meshes
 
 
@@ -70,8 +70,8 @@
 - [ ] Two cubes
 - [x] Bind groups
 - [ ] Dynamic uniform buffers
-- [ ] Texture mapping
-- [ ] Textured cube
+- [x] Texture mapping
+- [x] Textured cube
 - [ ] Cubemap texture
 - [ ] Skybox
 - [ ] 3D textures
