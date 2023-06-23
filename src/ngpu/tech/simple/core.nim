@@ -90,7 +90,7 @@ proc set *(trg :RenderTarget; mesh :RenderMesh) :void=
   trg.ct.setVertexBuffer(mesh.norm.kind,  mesh.buffer.ct, mesh.norm.offset,  mesh.norm.size)
 
 #___________________
-proc simple *(r :var Renderer; mesh :RenderMesh; tech :var RenderTech) :void=
+proc simple *(r :var Renderer; meshes :seq[RenderMesh]; tech :var RenderTech) :void=
   ## Executes the RenderPass of Tech.Simple.
   # Create the RenderTarget
   tech.phase[0].pass[0].trg = RenderTarget.new(
@@ -112,22 +112,26 @@ proc simple *(r :var Renderer; mesh :RenderMesh; tech :var RenderTech) :void=
     pipeline   = tech.phase[0].pass[0].pipeline.ct,
     ) # << wgpu.renderPass.set(pipeline)
   # Set the attributes of the mesh in the RenderTarget
-  tech.phase[0].pass[0].trg.set mesh
   for group in tech.phase[0].pass[0].binds:
     tech.phase[0].pass[0].trg.set group  # Set the `bindGroup` at @group(0), with no dynamic offsets (0, nil)
-  wgpu.draw(tech.phase[0].pass[0].trg.ct, mesh.indsCount, 1,0,0,0)  # instanceCount, firstVertex, baseVertex, firstInstance
+  # Queues Draw commands for all meshes one by one
+  for mesh in meshes:
+    tech.phase[0].pass[0].trg.set mesh
+    wgpu.draw(tech.phase[0].pass[0].trg.ct, mesh.indsCount, 1,0,0,0)  # instanceCount, firstVertex, baseVertex, firstInstance
   # Finish the RenderPass : Clears the swapChain.view, and renders the commands we sent.
   wgpu.End(tech.phase[0].pass[0].trg.ct)
   wgpu.drop(r.swapChain.view)  # Required by wgpu-native. Not standard WebGPU
 
 #___________________
-proc draw *(render :var Renderer; mesh :RenderMesh; tech :var RenderTech) :void=
-  ## Draws the given mesh using the Pipeline of the given Tech.Simple,
-  ## and connecting the given `data` tuple of RenderData for drawing.
+proc draw *(render :var Renderer; mesh :seq[RenderMesh]; tech :var RenderTech) :void=
+  ## Draws the given list of meshes using the Pipeline of the given Tech.Simple.
   render.win.update()        # Input update from glfw
   render.updateView()        # Update the swapChain's View  (we draw into it each frame)
   render.updateEncoder()     # Create this frame's Command Encoder
-  render.simple(mesh, tech)  # Order to draw the mesh with the Tech.Simple and the given data
+  render.simple(mesh, tech)  # Order to draw the mesh list with the Tech.Simple and the given data
   render.submitQueue()       # Submit the Rendering Queue
   render.present()           # Present the next swapchain texture on the screen.
+#___________________
+proc draw *(render :var Renderer; mesh :RenderMesh; tech :var RenderTech) :void=  render.draw(@[mesh], tech)
+  ## Draws the given mesh using the Pipeline of the given Tech.Simple.
 

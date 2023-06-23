@@ -6,7 +6,7 @@ include src/ngpu/nimble  # TODO: Remove `src` before publishing
 #___________________
 # Package
 packageName   = "ngpu"
-version       = "0.0.4"
+version       = "0.1.0"
 author        = "sOkam"
 description   = "n* Graphics Library | WebGPU"
 license       = "MIT"
@@ -38,5 +38,5 @@ task texture2, " Example 12:  sampled pixel texture."           : runExample "e1
 task depth, "    Example 13:  simple depth buffer attachment."  : runExample "e13_hellodepth"
 task camera, "   Example 14:  simple 3D camera controller."     : runExample "e14_hellocamera"
 # task instance, " Example 16:  cube instanced 100 times."        : runExample "e16_cubeinstanced"
-# task multimesh, "Example 17:  multi-mesh. cubes + pyramid."     : runExample "e17_multimesh"
+task multimesh, "Example 17:  multi-mesh. cubes + pyramid."     : runExample "e17_multimesh"
 

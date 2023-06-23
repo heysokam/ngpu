@@ -1,10 +1,10 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
 #:____________________________________________________
-# Minimal Camera controller                         |
-# Vertex colored cube,                              |
-# with perspective and WASD+Mouse camera movement.  |
-#___________________________________________________|
+# Multi-Mesh Example                                  |_
+# Draws multiple meshes using one single pipeline.     |
+# One Cube and one Pyramid, each with their own data.  |
+#______________________________________________________|
 # std dependencies
 import std/strformat
 import std/sequtils
@@ -19,10 +19,6 @@ import ./cfg
 import ./state as e
 import ./extras  # These should be coming from external libraries instead.
 
-
-#_____________________________
-# Camera state    : (required before the inputs, for this hacky implementation)
-#___________________
 
 #_____________________________
 # input.nim
@@ -146,11 +142,11 @@ import ngpu/tech/shared/data # TODO: This should be imported auto, but missing R
 # Entry Point
 #__________________
 proc run=
-  echo "ngpu | Hello Camera"
+  echo "ngpu | Hello Multi-Mesh"
   #__________________
   # Init a new Renderer
   e.render = Renderer.new(
-    title    = "ngpu | Hello Camera",
+    title    = "ngpu | Hello Multi-Mesh",
     label    = "ngpu",
     res      = cfg.res,
     key      = key,
@@ -168,19 +164,22 @@ proc run=
     far    = 100.0,
     )
   # 2. Generate the camera transform matrix (WVP)
-  u.W = mat4()                        # Identity matrix for the Model-to-World conversion of our cube coordinates
+  u.W = mat4()                        # Identity matrix for the Model-to-World conversion of our cube and pyramid coordinates
   u.V = cam.view()                    # Get the view matrix from the camera
   u.P = cam.proj(e.render.win.ratio)  # Get the proj matrix from the camera, based on the current screen size
   #__________________
   # Init the Data, Mesh and Technique
   var texture = e.render.new(Texture, img, "texPixels", "texSampler")  # Create the Texture     (sampled with default settings)
   var uniform = e.render.new(RenderData[Uniforms], u, "u")             # Create the RenderData  (aka uniform)
-  var cube    = e.render.new(RenderMesh, gen.cube())                   # Create the RenderMesh
+  var cube    = e.render.new(RenderMesh, gen.cube())                   # Create the Cube RenderMesh
+  var pyramid = e.render.new(RenderMesh, gen.pyramid())                # Create the Pyramid RenderMesh
+  let scene   = @[cube, pyramid]                                       # Create the list of meshes we will render  (not required, just ergonomics)
   var tech    = e.render.init(Tech.Simple,
     code = shaderCode,
     data = (uniform,texture).mvar, # The simple tech only accepts a tuple of Group.global data
     ) # << Tech.Simple.init( ... )
-  e.render.upload(cube)
+  e.render.upload(cube)     # Upload the cube to the GPU
+  e.render.upload(pyramid)  # Upload the pyramid to the GPU
   # Explicit upload step. Could be done when creating the objects (with upload = true)
   e.render.upload(texture)
   e.render.upload(uniform)
@@ -195,8 +194,8 @@ proc run=
     u.P    = cam.proj(e.render.win.ratio)  # Get the proj matrix from the camera, based on the current screen size
     u.time = glfw.getTime().float32
     e.render.update(uniform, u)
-    # Render this mesh, with this style
-    e.render.draw(cube, tech)  # (note: uses any global data contained in the style)
+    # Render these meshes, with this style
+    e.render.draw(scene, tech)  # (note: uses any global data contained in the style)
   #__________________
   # Terminate
   e.render.term()

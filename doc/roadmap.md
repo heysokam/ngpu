@@ -20,7 +20,7 @@
 - [x] Hardcoded mesh (Textured Cube)
   - [x] Flat
   - [x] Camera
-- [ ] Multiple Hardcoded Meshes
+- [x] Multiple Hardcoded Meshes
 
 
 

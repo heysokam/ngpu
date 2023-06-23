@@ -21,10 +21,6 @@ import ./extras  # These should be coming from external libraries instead.
 
 
 #_____________________________
-# Camera state    : (required before the inputs, for this hacky implementation)
-#___________________
-
-#_____________________________
 # input.nim
 #___________________
 from nglfw as glfw import nil

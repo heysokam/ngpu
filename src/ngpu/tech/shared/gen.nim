@@ -104,7 +104,7 @@ proc cube *() :Mesh=
     ) # << Mesh()
   result.chk()
 #__________________
-proc genPyramid *() :Mesh=
+proc pyramid *() :Mesh=
   ## Generates a Pyramid mesh with Deinterleaved vertex attributes
   result = Mesh(
     pos: @[
@@ -134,7 +134,7 @@ proc genPyramid *() :Mesh=
       color(1.0, 1.0, 1.0, 1.0),
       color(1.0, 1.0, 1.0, 1.0),
       color(1.0, 1.0, 1.0, 1.0),
-      color(0.5, 0.5, 0.5, 1.0),
+      color(0.3, 0.3, 0.3, 1.0),
       ], # << color
     inds: @[
       uvec3(0, 1, 2), uvec3(0, 2, 3),  # Base

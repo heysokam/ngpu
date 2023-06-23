@@ -56,9 +56,13 @@ proc draw *(render :var Renderer; tech :var RenderTech) :void=
   of    Tech.Triangle:  triangle.draw(render, tech)
   else: raise newException(DrawError, &"Drawing with RenderTech.{$tech.kind} without a RenderMesh is not supported.")
 #___________________
-proc draw *(render :var Renderer; mesh :RenderMesh; tech :var RenderTech) :void=
+proc draw *(render :var Renderer; mesh :seq[RenderMesh]; tech :var RenderTech) :void=
   case  tech.kind
   of    Tech.Clear, Tech.Triangle: raise newException(DrawError, &"Drawing a mesh with RenderTech.{$tech.kind} is not supported. Remove the mesh to call the other function overloads.")
   of    Tech.Simple:  simple.draw(render, mesh, tech)
   else: raise newException(DrawError, &"Drawing a RenderMesh with RenderTech.{$tech.kind} is not implemented. Create your own function for it, or submit a PR.")
+#___________________
+proc draw *(render :var Renderer; mesh :RenderMesh; tech :var RenderTech) :void=  render.draw( @[mesh], tech )
+  ## Draws a single mesh.  note: Alias for ergonomics.
+  ## Converts into a list, and draws it with the seq[RenderMesh] function instead.
 
