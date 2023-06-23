@@ -1,7 +1,7 @@
-# ngpu : Native WebGPU library in Nim
+# ngpu : n* Graphics Library for Nim
+![ngpu](./doc/res/gh_banner.png)
 Rendering library, targeting the design concepts of WebGPU-native.  
-Don't be fooled by the `web` part.  
-This project's target is native gpu usage.  
+_Don't be fooled by the `web` part. This project's target is native gpu usage._  
 
 
 ## ngpu as a Rendering Library
@@ -20,12 +20,12 @@ Not reinventing the wheel:
 `wgpu`   for graphics api  
 `glfw`   for window creation  
 `vmath`  for vector math  
-`pixie`  for image loading  
-`chroma` for colors  
+`pixie`  for image tools  
+`chroma` for colors tools  
 
 ## Current state and todo
-See the [examples](./examples/todo.md) file and folder for a reference of the current state of what the library can do.  
-The file @[examples/todo.md](./examples/todo.md) has a list of the examples that will be implemented.
+See the [examples](./examples) folder for a reference of the current state of what the library can do.  
+The file @[roadmap.md](./doc/roadmap.md) has a list of the features that will be implemented.
 
 
 ## Syntax and usage
