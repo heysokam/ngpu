@@ -33,7 +33,7 @@ proc clear *(r :var Renderer; color :ngpu.Color) :void=
     )) # << encoder.begin(RenderPass)
   # Finish the RenderPass : This will clear the swapChain.view with the color we gave.
   wgpu.End(renderPass)
-  wgpu.drop(r.swapChain.view)  # Required by wgpu-native. Not standard WebGPU
+  wgpu.release(r.swapChain.view)
 
 #_______________________________________
 proc draw *(render :var Renderer) :void=

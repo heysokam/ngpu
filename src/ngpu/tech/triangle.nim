@@ -160,7 +160,7 @@ proc triangle *(r :var Renderer; tech :var RenderTech) :void=
   wgpu.draw(tech.phase[0].pass[0].trg.ct, 3, 1,0,0)  # vertexCount, instanceCount, firstVertex, firstInstance
   # Finish the RenderPass : Clears the swapChain.view, and renders the commands we sent.
   wgpu.End(tech.phase[0].pass[0].trg.ct)
-  wgpu.drop(r.swapChain.view)  # Required by wgpu-native. Not standard WebGPU
+  wgpu.release(r.swapChain.view)
 
 #___________________
 proc draw *(render :var Renderer; tech :var RenderTech) :void=

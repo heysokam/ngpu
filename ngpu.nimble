@@ -1,7 +1,7 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
 #:____________________________________________________
-include src/ngpu/nimble  # TODO: Remove `src` before publishing
+import std/[ os,strformat ]
 
 #___________________
 # Package
@@ -13,30 +13,64 @@ license       = "MIT"
 
 #___________________
 # Build requirements
-requires "nim >= 1.6.12"
+requires "nim >= 2.0.0"
 requires "chroma"
 requires "pixie"
-# n* DevKit
-# requires "https://github.com/heysokam/nstd"
+# n*dk requirements
 requires "https://github.com/heysokam/nmath"
-requires "https://github.com/heysokam/nglfw"
-# TODO: Take from github after package tag creation has been figured out (with beef's `graffiti` automation)
-# requires "https://github.com/heysokam/wgpu"
+requires "https://github.com/heysokam/nglfw" ## For window creation. GLFW bindings, without dynamic libraries required
+requires "https://github.com/heysokam/wgpu"
 
 #___________________
-task tut, "     Builds the latest/current wip tutorial app.":  runExample "tut"
+# Folders
+srcDir           = "src"
+binDir           = "bin"
+var testsDir     = "tests"
+var examplesDir  = "examples"
+var docDir       = "doc"
+
+
+#________________________________________
+# Helpers
 #___________________
-task hello, "    Example 00:  hello window+instance"            : runExample "e00_hellongpu"
-task clear, "    Example 01:  clear window"                     : runExample "e01_helloclear"
-task triangle, " Example 02:  hello triangle"                   : runExample "e02_hellotriangle"
-task buffer, "   Example 03:  hello buffer"                     : runExample "e03_hellobuffer"
-task triangle4, "Example 07:  indexed multi-buffered triangle." : runExample "e07_trianglebuffered3"
-task struct, "   Example 09:  uniform struct."                  : runExample "e09_uniformstruct"
-# task dynamic, "  Example 10:  uniform struct."                  : runExample "e10_dynamicuniform"
-task texture, "  Example 11:  simple pixel texture."            : runExample "e11_hellotexture"
-task texture2, " Example 12:  sampled pixel texture."           : runExample "e12_sampledtexture"
-task depth, "    Example 13:  simple depth buffer attachment."  : runExample "e13_hellodepth"
-task camera, "   Example 14:  simple 3D camera controller."     : runExample "e14_hellocamera"
-# task instance, " Example 16:  cube instanced 100 times."        : runExample "e16_cubeinstanced"
-task multimesh, "Example 17:  multi-mesh. cubes + pyramid."     : runExample "e17_multimesh"
+const vlevel = when defined(debug): 2 else: 1
+let nimcr  = &"nim c -r --verbosity:{vlevel} --outdir:{binDir}"
+  ## Compile and run, outputting to binDir
+proc runFile (file, dir :string) :void=  exec &"{nimcr} {dir/file}"
+  ## Runs file from the given dir, using the nimcr command
+proc runTest (file :string) :void=  file.runFile(testsDir)
+  ## Runs the given test file. Assumes the file is stored in the default testsDir folder
+proc runExample (file :string) :void=  file.runFile(examplesDir)
+  ## Runs the given test file. Assumes the file is stored in the default testsDir folder
+template example (name :untyped; descr,file :static string)=
+  ## Generates a task to build+run the given example
+  let sname = astToStr(name)  # string name
+  taskRequires sname, "https://github.com/heysokam/nstd"
+  task name, descr:
+    runExample file
+
+#___________________
+#___________________
+example wip,       "Example WIP: Builds the latest/current wip tutorial app.", "wip"
+example hello,     "Example 00:  hello window+instance",                       "e00_hellongpu"
+example clear,     "Example 01:  clear window",                                "e01_helloclear"
+example triangle,  "Example 02:  hello triangle",                              "e02_hellotriangle"
+example buffer,    "Example 03:  hello buffer",                                "e03_hellobuffer"
+example triangle4, "Example 07:  indexed multi-buffered triangle.",            "e07_trianglebuffered3"
+example struct,    "Example 09:  uniform struct.",                             "e09_uniformstruct"
+# example dynamic,   "Example 10:  uniform struct.",                             "e10_dynamicuniform"
+example texture,   "Example 11:  simple pixel texture.",                       "e11_hellotexture"
+example texture2,  "Example 12:  sampled pixel texture.",                      "e12_sampledtexture"
+example depth,     "Example 13:  simple depth buffer attachment.",             "e13_hellodepth"
+example camera,    "Example 14:  simple 3D camera controller.",                "e14_hellocamera"
+example instance, " Example 16:  cube instanced 100 times.",                   "e16_cubeinstanced"
+example multimesh, "Example 17:  multi-mesh. cubes + pyramid.",                "e17_multimesh"
+
+#___________________
+# Helper Tasks
+task push, "Helper:  Pushes the git repository, and orders to create a new git tag for the package, using the latest version.":
+  ## Does nothing when local and remote versions are the same.
+  requires "https://github.com/beef331/graffiti.git"
+  exec "git push"  # Requires local auth
+  exec &"graffiti ./{packageName}.nimble"
 

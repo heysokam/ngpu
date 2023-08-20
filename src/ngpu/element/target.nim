@@ -66,10 +66,10 @@ proc new *(_:typedesc[Depth | DepthStencil];
     stencilReadOnly   : true,
     ) # << RenderPassDepthStencilAttachment( ... )
 #_____________________________
-proc drop *(depth :Depth) :void=
+proc release *(depth :Depth) :void=
   ## Drops the texture and view of the given Depth object.
-  wgpu.drop( depth.tex )
-  wgpu.drop( depth.view )
+  wgpu.release( depth.tex )
+  wgpu.release( depth.view )
 
 
 #_____________________________

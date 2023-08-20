@@ -120,7 +120,7 @@ proc simple *(r :var Renderer; meshes :seq[RenderMesh]; tech :var RenderTech) :v
     wgpu.draw(tech.phase[0].pass[0].trg.ct, mesh.indsCount, 1,0,0,0)  # instanceCount, firstVertex, baseVertex, firstInstance
   # Finish the RenderPass : Clears the swapChain.view, and renders the commands we sent.
   wgpu.End(tech.phase[0].pass[0].trg.ct)
-  wgpu.drop(r.swapChain.view)  # Required by wgpu-native. Not standard WebGPU
+  wgpu.release(r.swapChain.view)
 
 #___________________
 proc draw *(render :var Renderer; mesh :seq[RenderMesh]; tech :var RenderTech) :void=

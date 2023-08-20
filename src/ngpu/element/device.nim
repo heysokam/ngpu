@@ -48,11 +48,12 @@ proc new *(_:typedesc[ngpu.Device];
     requiredFeatures      : if features: result.features[0].addr else: nil,
     requiredLimits        : result.limits.addr,
     defaultQueue          : queueCfg,
+    deviceLostCallback    : lostCB,
+    deviceLostUserdata    : nil,
     ) # << deviceDesc
   adapter.ct.request(result.cfg.addr, requestCB, result.ct.addr)
   # Set the callbacks
   wgpu.set(result.ct, errorCB, nil)
-  wgpu.set(result.ct, lostCB, nil)
   # Get the device queue
   result.queue = ngpu.Queue.new(result)
   # Report info to console
