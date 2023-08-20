@@ -5,14 +5,14 @@
 import std/strformat
 # External dependencies
 import wgpu
-# ndk dependencies
+import nsys
+# n*dk dependencies
 import nstd
 import nmath
-# ngpu dependencies
+# n*gpu dependencies
 import ../types       as ngpu
 import ../tool/logger as l
 import ./adapter
-import ./window
 
 
 #________________________________________________

@@ -11,9 +11,9 @@
 # std dependencies
 import std/strformat
 import std/sequtils
-# ndk dependencies
+# n*dk dependencies
 import nstd
-# ngpu dependencies
+# n*gpu dependencies
 import ngpu
 
 #__________________

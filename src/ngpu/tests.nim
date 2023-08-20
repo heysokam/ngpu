@@ -3,7 +3,7 @@
 #:____________________________________________________
 # External dependencies
 import wgpu
-# ndk dependencies
+# n*dk dependencies
 import nstd/format
 
 

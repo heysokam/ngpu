@@ -8,11 +8,10 @@
 # std dependencies
 import std/strformat
 import std/sequtils
-# ndk dependencies
+# n*dk dependencies
 import nstd
 import nmath
-import vmath
-# ngpu dependencies
+# n*gpu dependencies
 import ngpu
 # Examples dependencies
 import ./cfg
@@ -146,11 +145,12 @@ proc run=
   #__________________
   # Init a new Renderer
   e.render = Renderer.new(
-    title    = "ngpu | Hello Camera",
-    label    = "ngpu",
-    res      = cfg.res,
-    key      = key,
-    mousePos = mousePos,
+    res       = cfg.res,
+    title     = "ngpu | Hello Camera",
+    label     = "ngpu",
+    key       = key,
+    resizable = false,
+    # mousePos  = mousePos,
     ) # << state.render.init()
   #__________________
   # NEW:

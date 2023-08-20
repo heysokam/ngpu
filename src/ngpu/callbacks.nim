@@ -3,9 +3,9 @@
 #:____________________________________________________
 # std dependencies
 import std/strformat
-# ndk dependencies
+# n*dk dependencies
 import wgpu
-# ngpu dependencies
+# n*gpu dependencies
 import ./tool/logger as l
 
 #_______________________________________

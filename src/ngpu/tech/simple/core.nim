@@ -3,13 +3,13 @@
 #:____________________________________________________
 # External dependencies
 import wgpu
-# ndk dependencies
+# n*dk dependencies
 import nstd/types  as base
-# ngpu dependencies
+import nsys
+# n*gpu dependencies
 import ../../types as ngpu
 import ../../core/render
 import ../../element/target
-import ../../element/window
 import ../../element/binding/group
 import ../../element/binding/entry
 import ../../element/tuples

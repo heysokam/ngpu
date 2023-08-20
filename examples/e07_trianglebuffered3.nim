@@ -4,9 +4,9 @@
 # Buffer-based Indexed Triangle                       |____________
 # Includes examples of trianglebuffered 1, 2 and 3 from wgpu-nim.  |
 #__________________________________________________________________|
-# ndk dependencies
+# n*dk dependencies
 import nstd
-# ngpu dependencies
+# n*gpu dependencies
 import ngpu
 # Examples dependencies
 import ./cfg

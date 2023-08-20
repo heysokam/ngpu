@@ -5,9 +5,9 @@
 import std/strformat
 # External dependencies
 import wgpu
-# ndk dependencies
+# n*dk dependencies
 import nstd/types    as base
-# ngpu dependencies
+# n*gpu dependencies
 import ../types      as ngpu
 import ../tool/color as c
 

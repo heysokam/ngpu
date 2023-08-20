@@ -5,11 +5,12 @@
 # Creates a wgpu.Instance and prints its address.   |
 # Creates a window that remains open until closed.  |
 #___________________________________________________|
-# ngpu dependencies
+# n*gpu dependencies
 import ngpu
 # Examples dependencies
 import ./cfg
 import ./state as e
+import ./extras
 
 #__________________
 # Inputs
@@ -24,15 +25,15 @@ proc key (win :glfw.Window; key, code, action, mods :cint) :void {.cdecl.}=
 #__________________
 proc run=
   echo "Hello ngpu"
-  e.window = Window.new(
-    title = "ngpu | Hello ngpu",
+  e.sys = nsys.init(
     res   = cfg.res,
-    key   = key,
-    ) # << state.window.init()
+    title = "ngpu | Hello ngpu",
+    # key   = key,
+    ) # << state.sys.init()
   ngpu.tests.basic()
-  while not e.window.close():
-    e.window.update()
-  e.window.term()
+  while not e.sys.close():
+    e.sys.update()
+  e.sys.term()
 #__________________
 when isMainModule: run()
 

@@ -3,9 +3,9 @@
 #:____________________________________________________
 # std dependencies
 import std/strformat
-# ndk dependencies
+# n*dk dependencies
 import nstd/types as base
-# ngpu dependencies
+# n*gpu dependencies
 import ./types as ngpu
 
 #________________________________________________

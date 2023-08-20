@@ -1,9 +1,9 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
 #:____________________________________________________
-# ndk dependencies
+# n*dk dependencies
 import nmath
-# ngpu dependencies
+# n*gpu dependencies
 import ../../tool/color
 # Tech.shared dependencies
 import ./types

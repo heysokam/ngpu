@@ -5,10 +5,10 @@
 # Current time can be accessed in shader code.      |
 # The Uniform struct also contains a color uniform  |
 #___________________________________________________|
-# ndk dependencies
+# n*dk dependencies
 import nstd
 import nmath
-# ngpu dependencies
+# n*gpu dependencies
 import ngpu
 # Examples dependencies
 import ./cfg
@@ -97,7 +97,7 @@ proc run=
   var triangle = e.render.new(RenderMesh, gen.triangle())    # Create the RenderMesh
   var tech     = e.render.init(Tech.Simple,
     code = shaderCode,
-    data = (uniform,).toData, # The simple tech only accepts a tuple of Group.global data
+    data = (uniform,).mvar, # The simple tech only accepts a tuple of Group.global data
     ) # << Tech.Simple.init( ... )
   e.render.upload(triangle)
   e.render.upload(uniform)  # Explicit upload step. Could be done when creating the data (with upload = true)

@@ -4,7 +4,7 @@
 # Most minimal draw possible.         |
 # Just clears the screen to a color.  |
 #_____________________________________|
-# ngpu dependencies
+# n*gpu dependencies
 import ngpu
 # Examples dependencies
 import ./cfg

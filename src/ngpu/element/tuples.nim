@@ -6,11 +6,11 @@
 #__________________________________________________|
 # std dependencies
 import std/strutils
-# ndk dependencies
+# n*dk dependencies
 import nstd/types as base
 import nstd/typetools
 import nstd/address
-# ngpu dependencies
+# n*gpu dependencies
 import ../types   as ngpu
 import ./data
 import ./texture

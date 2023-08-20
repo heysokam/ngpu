@@ -1,13 +1,15 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
 #:____________________________________________________
-# ngpu dependecies
+# n*dk dependencies
+import nsys
+# n*gpu dependencies
 import ngpu/types
 import ./extras
 
 #__________________
 # e00
-var window *:Window
+var sys *:nsys.System
 
 #__________________
 # Global

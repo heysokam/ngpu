@@ -18,7 +18,7 @@ requires "chroma"
 requires "pixie"
 # n*dk requirements
 requires "https://github.com/heysokam/nmath"
-requires "https://github.com/heysokam/nglfw" ## For window creation. GLFW bindings, without dynamic libraries required
+requires "https://github.com/heysokam/nsys" ## For window creation. GLFW interaction, without dynamic libraries required
 requires "https://github.com/heysokam/wgpu"
 
 #___________________

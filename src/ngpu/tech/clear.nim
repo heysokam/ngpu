@@ -3,9 +3,10 @@
 #:____________________________________________________
 # External dependencies
 import wgpu
-# ndk dependencies
+# n*dk dependencies
 import nstd
-# ngpu dependencies
+import nsys
+# n*gpu dependencies
 import ../types as ngpu
 import ../tool/color
 import ../elements

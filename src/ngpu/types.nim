@@ -6,11 +6,11 @@ import std/packedsets
 # External dependencies
 from   pkg/chroma import Color, color
 from   pkg/pixie  import Image
-# ndk dependencies
+# n*dk dependencies
 import nstd/types  as base
 import nmath/types as m
-from   nglfw       as glfw import nil
 from   wgpu        import nil
+import nsys
 
 #_______________________________________
 # Exports
@@ -19,6 +19,7 @@ export wgpu.BufferUsage
 export chroma.Color
 export chroma.ColorRGBX
 export pixie.Image
+export nsys.Window
 
 #_______________________________________
 # ngpu: Constants
@@ -34,13 +35,6 @@ type InitError * = object of IOError  ## When initializing objects in the whole 
 type LoadError * = object of IOError  ## When trying to load a resource.
 type DataError * = object of IOError  ## When trying to access data that should already be loaded/declared.
 type DrawError * = object of IOError  ## When trying to draw an object.
-#_______________________________________
-# ngpu: Window
-#__________________
-type Window * = ref object
-  ct     *:glfw.Window
-  size   *:UVec2
-  title  *:str
 
 #_______________________________________
 # ngpu: Elements

@@ -4,7 +4,7 @@
 # Hello Triangle from wgpu-native/examples          |
 # No buffers. Vertices are harcoded in the shader.  |
 #___________________________________________________|
-# ngpu dependencies
+# n*gpu dependencies
 import ngpu
 # Examples dependencies
 import ./cfg

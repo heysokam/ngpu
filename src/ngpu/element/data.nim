@@ -7,9 +7,9 @@ import std/strformat
 import std/strutils
 # External dependencies
 from   wgpu import ShaderStageFlags, ShaderStage
-# ndk dependencies
+# n*dk dependencies
 import nstd/types as base
-# ngpu dependencies
+# n*gpu dependencies
 import ../types   as ngpu
 import ../tool/wgsl
 import ./buffer

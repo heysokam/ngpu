@@ -3,10 +3,10 @@
 #:____________________________________________________
 # External dependencies
 import wgpu
-# ndk dependencies
+# n*dk dependencies
 import nstd
 import nmath
-# ngpu dependencies
+# n*gpu dependencies
 import ../../types as ngpu
 import ../../element/buffer
 # Tech dependencies

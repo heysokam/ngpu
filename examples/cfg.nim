@@ -1,7 +1,7 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
 #:____________________________________________________
-# ndk dependencies
+# n*dk dependencies
 import nstd/time
 import nmath
 

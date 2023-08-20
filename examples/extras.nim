@@ -1,8 +1,9 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
 #:____________________________________________________
-# ndk dependencies
-import nmath
+# n*dk dependencies
+import nmath ; export nmath
+import nsys  ; export nsys
 
 #_______________________________________
 # Math    : Should be coming from ndk/nmath

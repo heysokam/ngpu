@@ -5,9 +5,9 @@
 import std/strformat
 # External dependencies
 import wgpu
-# ndk dependencies
+# n*dk dependencies
 import nstd
-# ngpu dependencies
+# n*gpu dependencies
 import ../types as ngpu
 import ../tool/logger
 import ./bindings

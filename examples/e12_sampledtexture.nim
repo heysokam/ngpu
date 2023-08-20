@@ -6,10 +6,10 @@
 #____________________________________________|
 # std dependencies
 import std/sequtils
-# ndk dependencies
+# n*dk dependencies
 import nstd
 import nmath
-# ngpu dependencies
+# n*gpu dependencies
 import ngpu
 # Examples dependencies
 import ./cfg
@@ -104,7 +104,7 @@ proc run=
   var triangle = e.render.new(RenderMesh, gen.triangle())         # Create the RenderMesh
   var tech     = e.render.init(Tech.Simple,
     code = shaderCode,
-    data = (uniform,texture).toData, # The simple tech only accepts a tuple of Group.global data
+    data = (uniform,texture).mvar, # The simple tech only accepts a tuple of Group.global data
     ) # << Tech.Simple.init( ... )
   e.render.upload(triangle)
   # Explicit upload step. Could be done when creating the objects (with upload = true)

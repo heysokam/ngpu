@@ -11,7 +11,7 @@
 #____________________
 # types
 #_____________________________________________________
-# ndk dependencies
+# n*dk dependencies
 import nstd/types as base
 import nmath
 
@@ -33,7 +33,7 @@ const SafePitch = Tau-Epsilon
 #____________________
 # camera.nim
 #_____________________________________________________
-# ndk dependencies
+# n*dk dependencies
 import nstd/types as base
 import nmath
 

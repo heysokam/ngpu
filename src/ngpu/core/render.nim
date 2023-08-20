@@ -3,14 +3,14 @@
 #:____________________________________________________
 # External dependencies
 import wgpu
-# ndk dependencies
+# n*dk dependencies
 import nstd/types         as base
 import nmath/types        as m
 from   nglfw              as glfw import nil
-# ngpu dependencies
+import nsys
+# n*gpu dependencies
 import ../types           as ngpu
 import ../elements
-import ../element/window  as w
 import ../element/buffer  as buf
 import ../element/texture as tex
 import ../callbacks       as cb
@@ -87,14 +87,14 @@ proc new *(_:typedesc[Renderer];
     res            : UVec2;
     title          : str                         = "ngpu | Renderer";
     label          : str                         = "ngpu";
-    resizable      : bool                        = true;
+    resizable      : bool                        = false;
     resize         : glfw.FrameBufferSizeFun     = nil;
     key            : glfw.KeyFun                 = nil;
     mousePos       : glfw.CursorPosFun           = nil;
     mouseBtn       : glfw.MouseButtonFun         = nil;
     mouseScroll    : glfw.ScrollFun              = nil;
     mouseCapture   : bool                        = true;
-    error          : glfw.ErrorFun               = w.error;
+    error          : glfw.ErrorFun               = nsys.error;
     errorWGPU      : wgpu.ErrorCallback          = cb.error;
     logWGPU        : wgpu.LogCallback            = cb.log;
     logLevel       : wgpu.LogLevel               = wgpu.LogLevel.warn;

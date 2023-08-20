@@ -8,11 +8,11 @@
 # std dependencies
 import std/strformat
 import std/sequtils
-# ndk dependencies
+# n*dk dependencies
 import nstd
 import nmath
 import vmath
-# ngpu dependencies
+# n*gpu dependencies
 import ngpu
 # Examples dependencies
 import ./cfg

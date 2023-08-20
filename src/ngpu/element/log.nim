@@ -3,7 +3,7 @@
 #:____________________________________________________
 # External dependencies
 import wgpu
-# ngpu dependencies
+# n*gpu dependencies
 from   ../callbacks as cb import nil
 
 

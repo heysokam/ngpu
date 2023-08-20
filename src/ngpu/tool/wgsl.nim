@@ -5,9 +5,9 @@
 import std/macros
 import std/strformat
 import std/strutils
-# ndk dependencies
+# n*dk dependencies
 import nmath/types as m
-# ngpu dependencies
+# n*gpu dependencies
 import ../types as ngpu
 
 
