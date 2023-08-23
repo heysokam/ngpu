@@ -125,7 +125,7 @@ proc simple *(r :var Renderer; meshes :seq[RenderMesh]; tech :var RenderTech) :v
 #___________________
 proc draw *(render :var Renderer; mesh :seq[RenderMesh]; tech :var RenderTech) :void=
   ## Draws the given list of meshes using the Pipeline of the given Tech.Simple.
-  render.win.update()        # Input update from glfw
+  render.sys.update()        # Input update from glfw
   render.updateView()        # Update the swapChain's View  (we draw into it each frame)
   render.updateEncoder()     # Create this frame's Command Encoder
   render.simple(mesh, tech)  # Order to draw the mesh list with the Tech.Simple and the given data

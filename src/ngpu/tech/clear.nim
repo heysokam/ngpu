@@ -39,7 +39,7 @@ proc clear *(r :var Renderer; color :ngpu.Color) :void=
 #_______________________________________
 proc draw *(render :var Renderer) :void=
   ## Executes everything needed to draw the Clear RenderTech.
-  render.win.update()                       # Input update from glfw
+  render.sys.update()                       # Input update from glfw
   render.updateView()                       # Update the swapChain's View  (we draw into it each frame)
   render.updateEncoder()                    # Create this frame's Command Encoder
   render.clear( color(1.0, 0.0, 0.0, 1.0) ) # Order to draw a simple window clearing RenderPass

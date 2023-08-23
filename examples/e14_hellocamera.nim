@@ -164,9 +164,9 @@ proc run=
     far    = 100.0,
     )
   # 2. Generate the camera transform matrix (WVP)
-  u.W = mat4()                        # Identity matrix for the Model-to-World conversion of our cube coordinates
-  u.V = cam.view()                    # Get the view matrix from the camera
-  u.P = cam.proj(e.render.win.ratio)  # Get the proj matrix from the camera, based on the current screen size
+  u.W = mat4()                            # Identity matrix for the Model-to-World conversion of our cube coordinates
+  u.V = cam.view()                        # Get the view matrix from the camera
+  u.P = cam.proj(e.render.sys.win.ratio)  # Get the proj matrix from the camera, based on the current screen size
   #__________________
   # Init the Data, Mesh and Technique
   var texture = e.render.new(Texture, img, "texPixels", "texSampler")  # Create the Texture     (sampled with default settings)
@@ -187,8 +187,8 @@ proc run=
     inputUpdate()   # Camera needs updated inputs for this frame  (should be coming from ndk/nin)
     e.cam.update()  # Update the camera properties
     # Update the uniform contents
-    u.V    = cam.view()                    # Get the view matrix from the camera
-    u.P    = cam.proj(e.render.win.ratio)  # Get the proj matrix from the camera, based on the current screen size
+    u.V    = cam.view()                        # Get the view matrix from the camera
+    u.P    = cam.proj(e.render.sys.win.ratio)  # Get the proj matrix from the camera, based on the current screen size
     u.time = glfw.getTime().float32
     e.render.update(uniform, u)
     # Render this mesh, with this style

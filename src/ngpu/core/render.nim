@@ -19,9 +19,9 @@ import ../element/log     as lg
 
 
 #___________________
-proc close *(render :Renderer) :bool=  render.win.close()
+proc close *(render :Renderer) :bool=  render.sys.close()
   ## Checks if the given Renderer has been marked for closing.
-proc term *(render :var Renderer) :void=  render.win.term()
+proc term *(render :var Renderer) :void= render.sys.term()
   ## Terminate the given Renderer.
 proc present *(r :var Renderer) :void=  r.swapChain.ct.present()
   ## Presents the current swapChain texture into the screen.
@@ -33,10 +33,10 @@ proc updateView *(r :var Renderer; attempts :int= 2) :void=
   ## This is a fallible operation by spec, so we attempt multiple times (2x by default when omitted).
   for attempt in 0..<attempts:
     let prev = r.swapChain.getSize()
-    let curr = r.win.getSize()
+    let curr = r.sys.win.getSize()
     # Reset the swapchain context if the window was resized
     if prev != curr:
-      r.swapChain.setSize(r.win)
+      r.swapChain.setSize(r.sys.win)
       r.swapChain.ct = r.device.ct.create(r.adapter.surface, r.swapChain.cfg.addr)
     r.swapChain.view = r.swapChain.getView()
     if attempt == 0 and r.swapChain.view == nil:
@@ -84,6 +84,65 @@ proc update *(render :Renderer; trg :var TexData; img :Image) :void=
 
 #___________________
 proc new *(_:typedesc[Renderer];
+    system         : nsys.System;
+    label          : str                         = "ngpu";
+    errorWGPU      : wgpu.ErrorCallback          = cb.error;
+    logWGPU        : wgpu.LogCallback            = cb.log;
+    logLevel       : wgpu.LogLevel               = wgpu.LogLevel.warn;
+    report         : bool                        = true;
+    features       : seq[wgpu.Feature]           = @[];
+    lost           : wgpu.DeviceLostCallback     = cb.deviceLost;
+    power          : wgpu.PowerPreference        = PowerPreference.highPerformance;
+    forceFallback  : bool                        = false;
+    requestAdapter : wgpu.RequestAdapterCallback = cb.adapterRequest;
+    requestDevice  : wgpu.RequestDeviceCallback  = cb.deviceRequest;
+  ) :Renderer=
+  ## Initializes and returns an ngpu Renderer. Requires an already initialized n*sys window.
+  new result
+  result.label = label
+  #__________________
+  # Init Window
+  result.sys = system
+  #__________________
+  # Set wgpu.Logging
+  lg.set(logLevel, logWGPU)  # TODO: set(info, wrn, err, fail)
+  #__________________
+  # Init wgpu
+  # Create the Instance
+  result.instance = ngpu.Instance.new(label = label&" | Instance")
+  # Create the Surface and Adapter
+  result.adapter = ngpu.Adapter.new(
+    label         = label&" | Adapter",
+    instance      = result.instance,
+    win           = result.sys.win,
+    power         = power,
+    forceFallback = forceFallback,
+    requestCB     = requestAdapter,
+    report        = report,
+    ) # << Adapter.new( ... )
+  # Create the Device
+  result.device = ngpu.Device.new(
+    adapter    = result.adapter,
+    limits     = Limits.default(),
+    features   = features,
+    errorCB    = cb.error,
+    requestCB  = cb.deviceRequest,
+    report     = report,
+    lostCB     = cb.deviceLost,
+    queueLabel = label&" | Default Queue",
+    label      = label&" | Device",
+    ) # << Device.new( ... )
+  # Create the Swapchain
+  result.swapchain = ngpu.Swapchain.new(
+    win     = result.sys.win,
+    adapter = result.adapter,
+    device  = result.device,
+    alpha   = CompositeAlphaMode.auto,
+    present = PresentMode.fifo,
+    label   = label&" | Swapchain",
+    ) # << Swapchain.new( ... )
+#___________________
+proc new *(_:typedesc[Renderer];
     res            : UVec2;
     title          : str                         = "ngpu | Renderer";
     label          : str                         = "ngpu";
@@ -107,49 +166,20 @@ proc new *(_:typedesc[Renderer];
     requestDevice  : wgpu.RequestDeviceCallback  = cb.deviceRequest;
   ) :Renderer=
   ## Initializes and returns an ngpu Renderer
-  ## 1. Creates a window with GLFW
+  ## 1. Creates a window with n*sys
   ## 2. Initializes all wgpu objects required by ngpu
-  new result
-  result.label = label
-  #__________________
-  # Init Window
-  result.win = Window.new(res, title, resizable, resize, key, mousePos, mouseBtn, mouseScroll, mouseCapture, error)
-  #__________________
-  # Set wgpu.Logging
-  lg.set(logLevel, logWGPU)  # TODO: set(info, wrn, err, fail)
-  #__________________
-  # Init wgpu
-  # Create the Instance
-  result.instance = ngpu.Instance.new(label = label&" | Instance")
-  # Create the Surface and Adapter
-  result.adapter = ngpu.Adapter.new(
-    label         = label&" | Adapter",
-    instance      = result.instance,
-    win           = result.win,
-    power         = power,
-    forceFallback = forceFallback,
-    requestCB     = requestAdapter,
-    report        = report,
-    ) # << Adapter.new( ... )
-  # Create the Device
-  result.device = ngpu.Device.new(
-    adapter    = result.adapter,
-    limits     = Limits.default(),
-    features   = features,
-    errorCB    = cb.error,
-    requestCB  = cb.deviceRequest,
-    report     = report,
-    lostCB     = cb.deviceLost,
-    queueLabel = label&" | Default Queue",
-    label      = label&" | Device",
-    ) # << Device.new( ... )
-  # Create the Swapchain
-  result.swapchain = ngpu.Swapchain.new(
-    win     = result.win,
-    adapter = result.adapter,
-    device  = result.device,
-    alpha   = CompositeAlphaMode.auto,
-    present = PresentMode.fifo,
-    label   = label&" | Swapchain",
-    ) # << Swapchain.new( ... )
+  result = Renderer.new(
+    window         = Window.new(res, title, resizable, resize, key, mousePos, mouseBtn, mouseScroll, mouseCapture, error),
+    label          = label,
+    errorWGPU      = errorWGPU,
+    logWGPU        = logWGPU,
+    logLevel       = logLevel,
+    report         = report,
+    features       = features,
+    lost           = lost,
+    power          = power,
+    forceFallback  = forceFallback,
+    requestAdapter = requestAdapter,
+    requestDevice  = requestDevice,
+    ) # << Renderer.new( ... )
 

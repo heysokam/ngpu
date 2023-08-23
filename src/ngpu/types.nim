@@ -92,8 +92,8 @@ type Buffer *[T]= ref object
 #__________________
 type Renderer * = ref object of RootObj
   ## Rendering core
+  sys        *:System
   label      *:str
-  win        *:Window
   bg         *:Color
   instance   *:Instance
   adapter    *:Adapter
