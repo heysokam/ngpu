@@ -35,6 +35,11 @@ Each example is incrementally more complex than the previous one.
 The basic examples follow the structure of [Learn WebGPU C++](https://eliemichel.github.io/LearnWebGPU/), which I highly recommend for learning the WebGPU-based APIs.  
 The advanced ones are modeled after the [webgpu-native-examples](https://github.com/samdauwe/webgpu-native-examples#Basics) repository.
 
+```md
+# Build requirements
+rust : For building wgpu-native
+nim  : For building and running the code
+```
 
 ### Configurability
 ngpu is very configurable, as long as you use the provided tools/paradigms.
