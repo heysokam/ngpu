@@ -169,7 +169,7 @@ proc new *(_:typedesc[Renderer];
   ## 1. Creates a window with n*sys
   ## 2. Initializes all wgpu objects required by ngpu
   result = Renderer.new(
-    window         = Window.new(res, title, resizable, resize, key, mousePos, mouseBtn, mouseScroll, mouseCapture, error),
+    system         = nsys.init(res, title, resizable, resize, key, mousePos, mouseBtn, mouseScroll, mouseCapture, error),
     label          = label,
     errorWGPU      = errorWGPU,
     logWGPU        = logWGPU,
