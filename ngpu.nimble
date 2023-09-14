@@ -28,6 +28,7 @@ binDir           = "bin"
 var testsDir     = "tests"
 var examplesDir  = "examples"
 var docDir       = "doc"
+skipFiles        = @["nim.cfg"]
 
 
 #________________________________________
