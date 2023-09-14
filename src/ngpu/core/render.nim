@@ -13,15 +13,15 @@ import ../types           as ngpu
 import ../elements
 import ../element/buffer  as buf
 import ../element/texture as tex
-import ../callbacks       as cb
+from   ../callbacks       as cb import nil
 import ../tool/logger     as l
 import ../element/log     as lg
 
 
 #___________________
-proc close *(render :Renderer) :bool=  render.sys.close()
+proc close *(render :Renderer) :bool=  discard
   ## Checks if the given Renderer has been marked for closing.
-proc term *(render :var Renderer) :void= render.sys.term()
+proc term *(render :var Renderer) :void= discard
   ## Terminate the given Renderer.
 proc present *(r :var Renderer) :void=  r.swapChain.ct.present()
   ## Presents the current swapChain texture into the screen.
@@ -94,8 +94,9 @@ proc new *(_:typedesc[Renderer];
     lost           : wgpu.DeviceLostCallback     = cb.deviceLost;
     power          : wgpu.PowerPreference        = PowerPreference.highPerformance;
     forceFallback  : bool                        = false;
-    requestAdapter : wgpu.RequestAdapterCallback = cb.adapterRequest;
-    requestDevice  : wgpu.RequestDeviceCallback  = cb.deviceRequest;
+    adapterRequest : wgpu.RequestAdapterCallback = cb.adapterRequest;
+    deviceRequest  : wgpu.RequestDeviceCallback  = cb.deviceRequest;
+    deviceLost     : wgpu.DeviceLostCallback     = cb.deviceLost;
   ) :Renderer=
   ## Initializes and returns an ngpu Renderer. Requires an already initialized n*sys window.
   new result
@@ -117,7 +118,7 @@ proc new *(_:typedesc[Renderer];
     win           = result.sys.win,
     power         = power,
     forceFallback = forceFallback,
-    requestCB     = requestAdapter,
+    requestCB     = adapterRequest,
     report        = report,
     ) # << Adapter.new( ... )
   # Create the Device
@@ -125,10 +126,10 @@ proc new *(_:typedesc[Renderer];
     adapter    = result.adapter,
     limits     = Limits.default(),
     features   = features,
-    errorCB    = cb.error,
-    requestCB  = cb.deviceRequest,
+    errorCB    = errorWGPU,
+    requestCB  = deviceRequest,
     report     = report,
-    lostCB     = cb.deviceLost,
+    lostCB     = deviceLost,
     queueLabel = label&" | Default Queue",
     label      = label&" | Device",
     ) # << Device.new( ... )

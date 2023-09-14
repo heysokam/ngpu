@@ -11,18 +11,18 @@ import ./tool/logger as l
 #_______________________________________
 # WGPU default callbacks
 #__________________
-proc error *(typ :ErrorType; message :cstring; userdata :pointer) :void {.cdecl.}=
+proc error *(typ :ErrorType; message :CString; userdata :pointer) :void {.cdecl.}=
   err &"UNCAPTURED ERROR: ({$typ}): {$message}"
-proc log *(level :LogLevel; message :cstring; userdata :pointer) :void {.cdecl.}=
+proc log *(level :LogLevel; message :CString; userdata :pointer) :void {.cdecl.}=
   l.log &"[{$level}] {$message}"
 
 #__________________
 # Core
-proc adapterRequest *(status :RequestAdapterStatus; adapter :Adapter; message :cstring; userdata :pointer) :void {.cdecl.}=
+proc adapterRequest *(status :RequestAdapterStatus; adapter :Adapter; message :CString; userdata :pointer) :void {.cdecl.}=
   cast[ptr Adapter](userdata)[] = adapter  # *(WGPUAdapter*)userdata = received;
-proc deviceRequest  *(status :RequestDeviceStatus; device :Device; message :cstring; userdata :pointer) :void {.cdecl.}=
+proc deviceRequest  *(status :RequestDeviceStatus; device :Device; message :CString; userdata :pointer) :void {.cdecl.}=
   cast[ptr Device](userdata)[] = device  # *(WGPUAdapter*)userdata = received;
-proc deviceLost *(reason :DeviceLostReason; message :cstring; userdata :pointer) :void {.cdecl.}=
+proc deviceLost *(reason :DeviceLostReason; message :CString; userdata :pointer) :void {.cdecl.}=
   err &"DEVICE LOST: ({$reason}): {$message}"
 
 #__________________
