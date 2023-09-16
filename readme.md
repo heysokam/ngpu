@@ -5,7 +5,7 @@ _Don't be fooled by the `web` part. This project's target is native gpu usage._
 
 
 ## ngpu as a Rendering Library
-ngpu is a cohesive graphics layer, built on top of other tools.  
+ngpu is a cohesive graphics library, built on top of other tools.  
 
 Not agnostic. Technically a renderer:  
 - Goes beyond a raw wrapper, and takes assumptions on how rendering will be done.  
@@ -16,17 +16,23 @@ Not agnostic. Technically a renderer:
 _Note: Modern means 2015+ hardware, not 2000's version of "modern"._  
 _Not looking at you, opengl3..._  
 
-Not reinventing the wheel:  
-`wgpu`   for graphics api  
-`glfw`   for window creation  
-`vmath`  for vector math  
-`pixie`  for image tools  
-`chroma` for colors tools  
+```md
+# Not reinventing the wheel:
+`wgpu`   for graphics api
+`glfw`   for window creation
+`gltf`   for 3D models
+`vmath`  for vector math
+`pixie`  for image tools
+`chroma` for colors tools
+
+# Build requirements
+rust : For building wgpu-native
+nim  : For building and running the code
+```
 
 ## Current state and todo
 See the [examples](./examples) folder for a reference of the current state of what the library can do.  
 The file @[roadmap.md](./doc/roadmap.md) has a list of the features that will be implemented.
-
 
 ## Syntax and usage
 See the [examples](./examples/) folder for how the library is used.  
@@ -35,11 +41,10 @@ Each example is incrementally more complex than the previous one.
 The basic examples follow the structure of [Learn WebGPU C++](https://eliemichel.github.io/LearnWebGPU/), which I highly recommend for learning the WebGPU-based APIs.  
 The advanced ones are modeled after the [webgpu-native-examples](https://github.com/samdauwe/webgpu-native-examples#Basics) repository.
 
-```md
-# Build requirements
-rust : For building wgpu-native
-nim  : For building and running the code
-```
+If you are familiar with `vulkan.hpp` and `vk-bootstrap`, ngpu offers a lot of similarities for initializing wgpu.  
+If you only use the constructor procs, the API will be similar to theirs.  
+But then ngpu goes far beyond that boilerplate reduction step, and actually implements renderer features with its `RenderTech` logic,  
+which can also be expanded with your own rendering logic/features if you need them.  
 
 ### Configurability
 ngpu is very configurable, as long as you use the provided tools/paradigms.
