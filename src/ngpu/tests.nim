@@ -1,11 +1,10 @@
 #:____________________________________________________
-#  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
+#  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  :
 #:____________________________________________________
 # External dependencies
 import wgpu
 # n*dk dependencies
 import nstd/format
-
 
 
 #__________________
@@ -18,5 +17,5 @@ proc basic *() :void=
   doAssert instance != nil, "Couldn't create the wgpu-native instance."
   echo "ngpu works | Press Escape to close the window."
   echo "           | descriptor address is: ", descriptor.repra()
-  echo "           | instance   address is: ", instance.repra()
+  echo "           | instance   address is: ", cast[pointer](instance).repr() # needs cast to void* so that repr doesn't get confused with the indirection of `ptr InstanceImpl`
 

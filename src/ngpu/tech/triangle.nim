@@ -166,7 +166,6 @@ proc triangle *(r :var Renderer; tech :var RenderTech) :void=
 #___________________
 proc draw *(render :var Renderer; tech :var RenderTech) :void=
   ## Draws the Tech.Triangle, using the Pipeline initialized with triangle.init()
-  render.sys.update()    # Input update from glfw
   render.updateView()    # Update the swapChain's View  (we draw into it each frame)
   render.updateEncoder() # Create this frame's Command Encoder
   render.triangle(tech)  # Order to draw the Tech.Triangle with the given Pipeline

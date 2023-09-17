@@ -1,7 +1,6 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
 #:____________________________________________________
-
 import ./core/render  as renderCore  ; export renderCore
 import ./core/compute as computeCore ; export computeCore
 

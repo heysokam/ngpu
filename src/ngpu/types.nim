@@ -1,5 +1,5 @@
 #:____________________________________________________
-#  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
+#  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  :
 #:____________________________________________________
 # std dependencies
 import std/packedsets

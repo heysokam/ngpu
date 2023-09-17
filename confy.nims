@@ -1,5 +1,6 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  :
 #:____________________________________________________
-import ./tool/logger as ngpuLogger ; export ngpuLogger
-import ./tool/color  as ngpuColor  ; export ngpuColor
+when not defined(nimble) : include ../confy/src/confy/nims
+else                     : include confy/nims
+confy()

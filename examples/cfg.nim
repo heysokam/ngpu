@@ -1,5 +1,5 @@
 #:____________________________________________________
-#  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
+#  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  :
 #:____________________________________________________
 # n*dk dependencies
 import nstd/time
@@ -7,6 +7,7 @@ import nmath
 
 #____________________
 # General Config
+const Prefix   *:string=    "n*gpu"
 const maxDelta *:Duration=  initDuration(milliseconds = 1000 div 4)
 
 #____________________

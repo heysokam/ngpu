@@ -28,10 +28,5 @@ composite alphaMode   : auto
 presentMode           : fifo
 usage                 : RenderAttachment
 updateView attempts   : 2
-
-# Window
-error callback       : error() function found @ngpu/window.nim
-all other callbacks  : nil
-resizable            : true
 ```
 

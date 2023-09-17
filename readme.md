@@ -1,4 +1,4 @@
-# ngpu : n* Graphics Library for Nim
+# n*gpu | Graphics Library for Nim
 ![ngpu](./doc/res/gh_banner.png)
 Rendering library, targeting the design concepts of WebGPU-native.  
 _Don't be fooled by the `web` part. This project's target is native gpu usage._  

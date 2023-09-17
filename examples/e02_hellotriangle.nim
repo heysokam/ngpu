@@ -1,41 +1,34 @@
 #:____________________________________________________
-#  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
+#  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  :
 #:____________________________________________________
 # Hello Triangle from wgpu-native/examples          |
 # No buffers. Vertices are harcoded in the shader.  |
 #___________________________________________________|
+# n*dk dependencies
+import nsys
 # n*gpu dependencies
 import ngpu
 # Examples dependencies
 import ./cfg
 import ./state as e
 
-#__________________
-# Inputs
-from nglfw as glfw import nil
-proc key (win :glfw.Window; key, code, action, mods :cint) :void {.cdecl.}=
-  ## GLFW Keyboard Input Callback
-  if (key == glfw.KeyEscape and action == glfw.Press):
-    glfw.setWindowShouldClose(win, true)
-
 #________________________________________________
 # Entry Point
 #__________________
 proc run=
-  echo "ngpu | Hello Triangle"
-  # Init a new Renderer
-  e.render = Renderer.new(
-    title = "ngpu | Hello Triangle",
-    label = "ngpu",
-    res   = cfg.res,
-    key   = key,
-    ) # << state.render.init()
-  # Update loop
+  echo cfg.Prefix&" | Hello Triangle"
+  # Init the window+input and Renderer
+  e.sys    = nsys.init(cfg.res, title = cfg.Prefix&" | Hello Triangle") # << state.sys.init()
+  e.render = ngpu.new(Renderer, system = e.sys, label = cfg.Prefix) # << state.render.init()
+  # Init the RenderTech
   var tech = e.render.init(Tech.Triangle)
-  while not e.render.close():
+  # Update loop
+  while not e.sys.close():
+    e.sys.update()
     e.render.draw(tech)
   # Terminate
   e.render.term()
+  e.sys.term()
 
 #________________________________________________
 when isMainModule: run()
