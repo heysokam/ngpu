@@ -13,6 +13,9 @@ proc clean (trg :BuildTrg) :void=
   os.removeFile(cfg.binDir/trg.trg)
 ]#
 
+const memdebug :bool= on
+const release  :bool= off
+
 #________________________________________
 # Build tasks
 #___________________
@@ -21,8 +24,23 @@ template example *(name :untyped; descr,file :static string)=
   const deps :seq[string]= @[
   ""
   ] # Examples: Build Requirements
+  const args :seq[string]= @[
+    "--path:\"../src/\"",
+    # "--d:release",
+    when memdebug:
+      "--listCmd",
+      "--passC:\"-ggdb\"",
+      "--passC:\"-O0\"",
+      # "--debugger:native",
+      # "--passc:\"-fsanitize=undefined\"",
+      "--passC:\"-fsanitize=address\"",
+      "--passL:\"-fsanitize=address\"",
+      "--passL:\"-lasan\"",
+      "--passL:\"-shared-libasan\"",
+      "--d:useMalloc",
+    ]
   os.removeFile(cfg.binDir/astToStr(name))
-  example name, descr, file, deps, true, true
+  example name, descr, file, deps, args, true, true
   # os.removeFile(cfg.binDir/astToStr(name))
 
 # Build the examples binaries
