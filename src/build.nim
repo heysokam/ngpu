@@ -13,8 +13,9 @@ proc clean (trg :BuildTrg) :void=
   os.removeFile(cfg.binDir/trg.trg)
 ]#
 
-const memdebug :bool= on
-const release  :bool= off
+const debug    :bool= on
+const memdebug :bool= on and debug
+const release  :bool= not debug
 
 #________________________________________
 # Build tasks
@@ -24,21 +25,16 @@ template example *(name :untyped; descr,file :static string)=
   const deps :seq[string]= @[
   ""
   ] # Examples: Build Requirements
-  const args :seq[string]= @[
-    "--path:\"../src/\"",
-    # "--d:release",
-    when memdebug:
-      "--listCmd",
-      "--passC:\"-ggdb\"",
-      "--passC:\"-O0\"",
-      # "--debugger:native",
-      # "--passc:\"-fsanitize=undefined\"",
-      "--passC:\"-fsanitize=address\"",
-      "--passL:\"-fsanitize=address\"",
-      "--passL:\"-lasan\"",
-      "--passL:\"-shared-libasan\"",
-      "--d:useMalloc",
+  var args :seq[string]= @[ "--path:\"../src/\"", ]
+  when release  : args &= @[ "--d:release", ]
+  elif debug    : args &= @[ "--d:debug", "--listCmd", "--passC:\"-O0 -ggdb\"", ]
+  when memdebug : args &= @[
+    "--passC:\"-fsanitize=undefined,address\"",
+    "--passL:\"-fsanitize=undefined,address\"",
+    "--passL:\"-lasan -shared-libasan\"",
+    "--d:useMalloc",
     ]
+  else: args &= @[ "--debugger:native", ]
   os.removeFile(cfg.binDir/astToStr(name))
   example name, descr, file, deps, args, true, true
   # os.removeFile(cfg.binDir/astToStr(name))

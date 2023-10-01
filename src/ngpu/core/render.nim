@@ -19,8 +19,6 @@ import ../element/log     as lg
 
 
 #___________________
-proc close *(render :Renderer) :bool=  discard
-  ## Checks if the given Renderer has been marked for closing.
 proc term *(render :var Renderer) :void= discard
   ## Terminate the given Renderer.
 proc present *(r :var Renderer) :void=  r.swapChain.ct.present()
@@ -142,45 +140,3 @@ proc new *(_:typedesc[Renderer];
     present = PresentMode.fifo,
     label   = label&" | Swapchain",
     ) # << Swapchain.new( ... )
-#___________________
-proc new *(_:typedesc[Renderer];
-    res            : UVec2;
-    title          : str                         = "ngpu | Renderer";
-    label          : str                         = "ngpu";
-    resizable      : bool                        = false;
-    resize         : glfw.FrameBufferSizeFun     = nil;
-    key            : glfw.KeyFun                 = nil;
-    mousePos       : glfw.CursorPosFun           = nil;
-    mouseBtn       : glfw.MouseButtonFun         = nil;
-    mouseScroll    : glfw.ScrollFun              = nil;
-    mouseCapture   : bool                        = true;
-    error          : glfw.ErrorFun               = nsys.error;
-    errorWGPU      : wgpu.ErrorCallback          = cb.error;
-    logWGPU        : wgpu.LogCallback            = cb.log;
-    logLevel       : wgpu.LogLevel               = wgpu.LogLevel.warn;
-    report         : bool                        = true;
-    features       : seq[wgpu.Feature]           = @[];
-    lost           : wgpu.DeviceLostCallback     = cb.deviceLost;
-    power          : wgpu.PowerPreference        = PowerPreference.highPerformance;
-    forceFallback  : bool                        = false;
-    requestAdapter : wgpu.RequestAdapterCallback = cb.adapterRequest;
-    requestDevice  : wgpu.RequestDeviceCallback  = cb.deviceRequest;
-  ) :Renderer=
-  ## Initializes and returns an ngpu Renderer
-  ## 1. Creates a window with n*sys
-  ## 2. Initializes all wgpu objects required by ngpu
-  result = Renderer.new(
-    system         = nsys.init(res, title, resizable, resize, key, mousePos, mouseBtn, mouseScroll, mouseCapture, error),
-    label          = label,
-    errorWGPU      = errorWGPU,
-    logWGPU        = logWGPU,
-    logLevel       = logLevel,
-    report         = report,
-    features       = features,
-    lost           = lost,
-    power          = power,
-    forceFallback  = forceFallback,
-    requestAdapter = requestAdapter,
-    requestDevice  = requestDevice,
-    ) # << Renderer.new( ... )
-
