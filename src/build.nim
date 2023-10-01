@@ -13,9 +13,11 @@ proc clean (trg :BuildTrg) :void=
   os.removeFile(cfg.binDir/trg.trg)
 ]#
 
-const debug    :bool= on
-const memdebug :bool= on and debug
-const release  :bool= not debug
+const debug       :bool= off
+const memdebug    :bool= on and debug
+const release     :bool= not debug
+const alwaysClean :bool= on
+cfg.verbose = debug
 
 #________________________________________
 # Build tasks
@@ -35,9 +37,9 @@ template example *(name :untyped; descr,file :static string)=
     "--d:useMalloc",
     ]
   else: args &= @[ "--debugger:native", ]
-  os.removeFile(cfg.binDir/astToStr(name))
+  if alwaysClean: os.removeFile(cfg.binDir/astToStr(name))
   example name, descr, file, deps, args, true, true
-  # os.removeFile(cfg.binDir/astToStr(name))
+  if alwaysClean: os.removeFile(cfg.binDir/astToStr(name))
 
 # Build the examples binaries
 example wip,       "Example WIP: Builds the latest/current wip tutorial app.", "wip"
