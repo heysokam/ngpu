@@ -36,6 +36,7 @@ proc updateView *(r :var Renderer; attempts :int= 2) :void=
     if prev != curr:
       r.swapChain.setSize(r.sys.win)
       r.swapChain.ct = r.device.ct.create(r.adapter.surface, r.swapChain.cfg.addr)
+      # echo "----------------->",attempt  # TODO Fix resize issue
     r.swapChain.view = r.swapChain.getView()
     if attempt == 0 and r.swapChain.view == nil:
       wrn "swapChain.getCurrentTextureView() failed; attempting to create a new swap chain..."

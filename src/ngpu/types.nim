@@ -31,10 +31,10 @@ const NoTypeCode * = "// NoTypeCode"
 #_______________________________________
 # ngpu: Errors
 #__________________
-type InitError * = object of IOError  ## When initializing objects in the whole lib.
-type LoadError * = object of IOError  ## When trying to load a resource.
-type DataError * = object of IOError  ## When trying to access data that should already be loaded/declared.
-type DrawError * = object of IOError  ## When trying to draw an object.
+type InitError * = object of CatchableError  ## When initializing objects in the whole lib.
+type LoadError * = object of CatchableError  ## When trying to load a resource.
+type DataError * = object of CatchableError  ## When trying to access data that should already be loaded/declared.
+type DrawError * = object of CatchableError  ## When trying to draw an object.
 
 #_______________________________________
 # ngpu: Elements

@@ -6,17 +6,13 @@ import wgpu
 # n*dk dependencies
 import nstd/types  as base
 import nmath/types as m
+import nimp/mdl    as nimp
 # n*gpu dependencies
 import ../../types as ngpu
 
 #_____________________________
-type Mesh * = object
-  pos    *:seq[Vec3]
-  color  *:seq[ngpu.Color]
-  uv     *:seq[Vec2]
-  norm   *:seq[Vec3]
-  inds   *:seq[UVec3]
-
+# Export the nimp.Mesh type
+export nimp.Mesh
 
 #_____________________________
 type Attr *{.pure.}= enum pos, color, uv, norm

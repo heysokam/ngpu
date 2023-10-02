@@ -59,12 +59,12 @@ proc new *(_:typedesc[ngpu.BindGroup];
   result.entries = entries
   result.id      = shape.id
   var bindings   = result.entries.toWgpu
-  result.cfg     = BindGroupDescriptor(
+  result.cfg = BindGroupDescriptor(
     nextInChain   : nil,
     label         : result.label.cstring,
     layout        : shape.ct,
     entryCount    : bindings.len.uint32,
-    entries       : bindings[0].addr,
+    entries       : if bindings.len != 0: bindings[0].addr else: nil,
     ) # << BindGroupDescriptor( ... )
   result.ct = device.ct.create(result.cfg.addr) # device.createBindGroup()
 #___________________

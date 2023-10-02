@@ -10,7 +10,7 @@ import ../../types as ngpu
 import ../../element/shader
 
 #___________________
-const shaderCode * = """
+const Code * = """
 struct VertIn {
   @builtin(vertex_index) id :u32,
   @location(0) pos   :vec3<f32>,
@@ -41,7 +41,7 @@ struct VertOut {
 #___________________
 proc get *(device :ngpu.Device;
     _      : typedesc[Shader];
-    code   : str = shaderCode;
+    code   : str = Code;
     file   : str = NoFile;
     label  : str = "ngpu | Tech.Simple Shader";
   ) :Shader=

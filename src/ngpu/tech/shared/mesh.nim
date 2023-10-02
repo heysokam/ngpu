@@ -24,7 +24,7 @@ func indsCount *(m :RenderMesh) :uint32=  uint32( m.inds.data.len * 3)
 #__________________
 func size *(m :Mesh) :uint64=
   ## Returns the size in bytes of the given mesh
-  for attr in m.fields:
+  for attr in m[].fields():
     if attr.len > 0:  result += attr.size   # Do not add empty seq
 #__________________
 proc indexFormat *[T](_:typedesc[T]) :IndexFormat=

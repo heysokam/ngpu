@@ -13,11 +13,12 @@ proc clean (trg :BuildTrg) :void=
   os.removeFile(cfg.binDir/trg.trg)
 ]#
 
-const debug       :bool= off
+const debug       :bool= on
 const memdebug    :bool= on and debug
 const release     :bool= not debug
-const alwaysClean :bool= on
+const alwaysClean :bool= off
 cfg.verbose = debug
+cfg.flags   = allC
 
 #________________________________________
 # Build tasks

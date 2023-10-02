@@ -14,6 +14,7 @@ import ./mesh
 proc chk (mesh :Mesh) :void=
   ## Checks that all attributes in the given Mesh contain the same amount of vertex.
   let vertc = mesh.vertCount.int
+  assert mesh != nil, "Mesh object must be initialized"
   assert vertc == mesh.color.len and 
          vertc == mesh.uv.len and 
          vertc == mesh.norm.len,
