@@ -75,7 +75,7 @@ proc genType (T :typedesc) :string=
   result.add &"struct {tName}" & " {\n"
   for field in default(T).fields:
     let fType = ($(field.type)).toWgpu
-    let fName = field.name
+    let fName = wgsl.name(field)
     result.add &"{tab}{fName} :{fType},\n"
   result.add "}\n"
 #_____________________________

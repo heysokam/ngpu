@@ -1,27 +1,41 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  :
 #:____________________________________________________
+# std dependencies
+import std/os except `/`
+import std/sets
+import std/strformat
+# confy dependencies
 when not defined(nimble):
   import ../../confy/src/confy
 else:
   import confy
 
-import std/os except `/`
-#[
-proc clean (trg :BuildTrg) :void=
-  os.removeDir(cfg.cacheDir)
-  os.removeFile(cfg.binDir/trg.trg)
-]#
 
+#________________________________________
+# Configuration
+#___________________
+# Custom
 const debug       :bool= on
 const memdebug    :bool= on and debug
 const release     :bool= not debug
-const alwaysClean :bool= off
+const alwaysClean :bool= on
+# Confy
 cfg.verbose = debug
 cfg.flags   = allC
 
 #________________________________________
+# Helpers
+#___________________
+proc exec (file :string) :void=
+  when memdebug : sh file
+  elif debug    : sh &"nim-gdb -ex run " & file
+  else          : sh file
+
+#________________________________________
 # Build tasks
+#___________________
+let keywordList = confy.getList()
 #___________________
 template example *(name :untyped; descr,file :static string)=
   ## Custom examples alias (per project)
@@ -38,9 +52,12 @@ template example *(name :untyped; descr,file :static string)=
     "--d:useMalloc",
     ]
   else: args &= @[ "--debugger:native", ]
-  if alwaysClean: os.removeFile(cfg.binDir/astToStr(name))
-  example name, descr, file, deps, args, true, true
-  if alwaysClean: os.removeFile(cfg.binDir/astToStr(name))
+  let sname = astToStr(name)
+  let fname = cfg.binDir/sname
+  if alwaysClean: os.removeFile(fname)
+  example name, descr, file, deps, args, false, true
+  if sname in keywordList and fname.fileExists(): exec fname
+  if alwaysClean: os.removeFile(fname)
 
 # Build the examples binaries
 example wip,       "Example WIP: Builds the latest/current wip tutorial app.", "wip"

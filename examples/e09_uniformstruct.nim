@@ -8,23 +8,17 @@
 # n*dk dependencies
 import nstd
 import nmath
+import nsys
 # n*gpu dependencies
 import ngpu
 # Examples dependencies
 import ./cfg
 import ./state as e
 
-#__________________
-# Inputs
-from nglfw as glfw import nil
-proc key (win :glfw.Window; key, code, action, mods :cint) :void {.cdecl.}=
-  ## GLFW Keyboard Input Callback
-  if (key == glfw.KeyEscape and action == glfw.Press):
-    glfw.setWindowShouldClose(win, true)
-
 
 #__________________
 # Dependencies specific to this example
+from nglfw as glfw import nil
 import ngpu/tech/shared/gen
 
 #_____________________________
@@ -82,15 +76,11 @@ import ngpu/tech/shared/data # TODO: This should be imported auto, but missing R
 # Entry Point
 #__________________
 proc run=
-  echo "ngpu | Hello Uniform"
+  echo cfg.Prefix&" | Hello Uniform"
   #__________________
-  # Init a new Renderer
-  e.render = Renderer.new(
-    title  = "ngpu | Hello Uniform",
-    label  = "ngpu",
-    res    = cfg.res,
-    key    = key,
-    ) # << state.render.init()
+  # Init the window+input and Renderer
+  e.sys    = nsys.init(cfg.res, title = cfg.Prefix&" | Hello Uniform") # << state.sys.init()
+  e.render = ngpu.new(Renderer, system = e.sys, label = cfg.Prefix) # << state.render.init()
   #__________________
   # Init the Data, Mesh and Technique
   var uniform  = e.render.new(RenderData[Uniforms], u, "u")  # Create the RenderData  (aka uniform)
@@ -103,7 +93,8 @@ proc run=
   e.render.upload(uniform)  # Explicit upload step. Could be done when creating the data (with upload = true)
   #__________________
   # Update loop
-  while not e.render.close():
+  while not e.sys.close():
+    e.sys.update()
     # Update the uniform contents
     u.time = glfw.getTime().float32
     e.render.update(uniform, u)
@@ -112,6 +103,7 @@ proc run=
   #__________________
   # Terminate
   e.render.term()
+  e.sys.term()
 
 
 #________________________________________________
