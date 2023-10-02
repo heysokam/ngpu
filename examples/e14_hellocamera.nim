@@ -25,7 +25,7 @@ import ./extras  # These should be coming from external libraries instead.
 from nglfw as glfw import nil
 var i :Inputs  # Inputs state
 #__________________
-proc key (win :glfw.Window; key, code, action, mods :cint) :void {.cdecl.}=
+proc keyCB (win :glfw.Window; key, code, action, mods :cint) :void {.cdecl.}=
   ## GLFW Keyboard Input Callback
   let hold = action == glfw.Press or action == glfw.Repeat
   let rls  = action == glfw.Release
@@ -45,7 +45,7 @@ proc key (win :glfw.Window; key, code, action, mods :cint) :void {.cdecl.}=
     if action == glfw.Press: echo &"pos:{cam.pos}  trg:{cam.dir}"
   else: discard
 #__________________
-proc mousePos *(window :glfw.Window; xpos, ypos :float64) :void {.cdecl.}=
+proc mousePosCB (window :glfw.Window; xpos, ypos :float64) :void {.cdecl.}=
   ## GLFW Mouse Position Input Callback
   let chg = vec2(
     xpos.float32 - i.cursor.pos.x,
@@ -54,8 +54,7 @@ proc mousePos *(window :glfw.Window; xpos, ypos :float64) :void {.cdecl.}=
   if chg < vec2(10,10): i.cursor.chg += chg  # Accumulate multiple events across the same frame
   i.cursor.pos = vec2(xpos, ypos)            # Store current x,y
 #__________________
-proc inputUpdate *() :void=  glfw.pollEvents()
-  ## Orders GLFW to check for input updates.
+
 
 #________________________________________________
 # camera.nim
@@ -75,7 +74,6 @@ proc update (cam :var Camera) :void=
 #__________________
 # Dependencies specific to this example
 import ngpu/tech/shared/gen
-from   ngpu/element/window import ratio
 
 #_____________________________
 # Shader code
@@ -144,7 +142,11 @@ proc run=
   echo cfg.Prefix&" | Hello Camera"
   #__________________
   # Init the window+input and Renderer
-  e.sys    = nsys.init(cfg.res, title = cfg.Prefix&" | Hello Camera") # << state.sys.init()
+  e.sys = nsys.init(cfg.res, cfg.Prefix&" | Hello Camera",
+    key          = keyCB,
+    mousePos     = mousePosCB,
+    mouseCapture = on,
+    ) # << state.sys.init()
   e.render = ngpu.new(Renderer, system = e.sys, label = cfg.Prefix) # << state.render.init()
   #__________________
   # NEW:
@@ -177,9 +179,8 @@ proc run=
   #__________________
   # Update loop
   while not e.sys.close():
-    e.sys.update()
+    e.sys.update()  # Camera needs updated inputs for this frame
     # 3. Update the camera at the beginning of the frame
-    inputUpdate()   # Camera needs updated inputs for this frame  (should be coming from ndk/nin)
     e.cam.update()  # Update the camera properties
     # Update the uniform contents
     u.V    = cam.view()                        # Get the view matrix from the camera

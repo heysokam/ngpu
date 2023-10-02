@@ -118,9 +118,10 @@ proc simple *(r :var Renderer; meshes :seq[RenderMesh]; tech :var RenderTech) :v
   for mesh in meshes:
     tech.phase[0].pass[0].trg.set mesh
     wgpu.draw(tech.phase[0].pass[0].trg.ct, mesh.indsCount, 1,0,0,0)  # instanceCount, firstVertex, baseVertex, firstInstance
-  # Finish the RenderPass : Clears the swapChain.view, and renders the commands we sent.
+  # Finish the RenderPass : Renders the commands we sent, and clears the swapChain.view and depth.texture & depth.view
   wgpu.End(tech.phase[0].pass[0].trg.ct)
   wgpu.release(r.swapChain.view)
+  target.release(tech.phase[0].pass[0].trg.depth) # Not doing this causes a huge 2GB/sec memory leak
 
 #___________________
 proc draw *(render :var Renderer; mesh :seq[RenderMesh]; tech :var RenderTech) :void=

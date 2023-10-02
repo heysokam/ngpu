@@ -49,7 +49,7 @@ template example *(name :untyped; descr,file :static string)=
     "--passC:\"-fsanitize=undefined,address\"",
     "--passL:\"-fsanitize=undefined,address\"",
     "--passL:\"-lasan -shared-libasan\"",
-    "--d:useMalloc",
+    "-d:useMalloc",
     ]
   else: args &= @[ "--debugger:native", ]
   let sname = astToStr(name)

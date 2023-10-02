@@ -55,8 +55,7 @@ proc mousePosCB *(window :glfw.Window; xpos, ypos :float64) :void {.cdecl.}=
   if chg < vec2(10,10): i.cursor.chg += chg  # Accumulate multiple events across the same frame
   i.cursor.pos = vec2(xpos, ypos)            # Store current x,y
 #__________________
-proc inputUpdate *() :void=  glfw.pollEvents()
-  ## Orders GLFW to check for input updates.
+
 
 #________________________________________________
 # camera.nim
@@ -145,8 +144,9 @@ proc run=
   #__________________
   # Init the window+input and Renderer
   e.sys = nsys.init(cfg.res, cfg.Prefix&" | Hello Multi-Mesh",
-    key      = keyCB,
-    mousePos = mousePosCB,
+    key          = keyCB,
+    mousePos     = mousePosCB,
+    mouseCapture = on,
     ) # << state.sys.init()
   e.render = ngpu.new(Renderer, system = e.sys, label = cfg.Prefix) # << state.render.init()
   #__________________
@@ -185,7 +185,6 @@ proc run=
   while not e.sys.close():
     e.sys.update()
     # 3. Update the camera at the beginning of the frame
-    inputUpdate()   # Camera needs updated inputs for this frame  (should be coming from ndk/nin)
     e.cam.update()  # Update the camera properties
     # Update the uniform contents
     u.V    = cam.view()                        # Get the view matrix from the camera
