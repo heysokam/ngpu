@@ -141,17 +141,11 @@ import ngpu/tech/shared/data # TODO: This should be imported auto, but missing R
 # Entry Point
 #__________________
 proc run=
-  echo "ngpu | Hello Camera"
+  echo cfg.Prefix&" | Hello Camera"
   #__________________
-  # Init a new Renderer
-  e.render = Renderer.new(
-    res       = cfg.res,
-    title     = "ngpu | Hello Camera",
-    label     = "ngpu",
-    key       = key,
-    resizable = false,
-    # mousePos  = mousePos,
-    ) # << state.render.init()
+  # Init the window+input and Renderer
+  e.sys    = nsys.init(cfg.res, title = cfg.Prefix&" | Hello Camera") # << state.sys.init()
+  e.render = ngpu.new(Renderer, system = e.sys, label = cfg.Prefix) # << state.render.init()
   #__________________
   # NEW:
   # 1. Create the camera
@@ -182,7 +176,8 @@ proc run=
   e.render.upload(uniform)
   #__________________
   # Update loop
-  while not e.render.close():
+  while not e.sys.close():
+    e.sys.update()
     # 3. Update the camera at the beginning of the frame
     inputUpdate()   # Camera needs updated inputs for this frame  (should be coming from ndk/nin)
     e.cam.update()  # Update the camera properties
@@ -196,6 +191,7 @@ proc run=
   #__________________
   # Terminate
   e.render.term()
+  e.sys.term()
 
 
 #________________________________________________

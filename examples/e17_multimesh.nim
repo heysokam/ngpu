@@ -11,7 +11,7 @@ import std/sequtils
 # n*dk dependencies
 import nstd
 import nmath
-import vmath
+import nsys
 # n*gpu dependencies
 import ngpu
 # Examples dependencies
@@ -26,7 +26,7 @@ import ./extras  # These should be coming from external libraries instead.
 from nglfw as glfw import nil
 var i :Inputs  # Inputs state
 #__________________
-proc key (win :glfw.Window; key, code, action, mods :cint) :void {.cdecl.}=
+proc keyCB (win :glfw.Window; key, code, action, mods :cint) :void {.cdecl.}=
   ## GLFW Keyboard Input Callback
   let hold = action == glfw.Press or action == glfw.Repeat
   let rls  = action == glfw.Release
@@ -46,7 +46,7 @@ proc key (win :glfw.Window; key, code, action, mods :cint) :void {.cdecl.}=
     if action == glfw.Press: echo &"pos:{cam.pos}  trg:{cam.dir}"
   else: discard
 #__________________
-proc mousePos *(window :glfw.Window; xpos, ypos :float64) :void {.cdecl.}=
+proc mousePosCB *(window :glfw.Window; xpos, ypos :float64) :void {.cdecl.}=
   ## GLFW Mouse Position Input Callback
   let chg = vec2(
     xpos.float32 - i.cursor.pos.x,
@@ -76,7 +76,6 @@ proc update (cam :var Camera) :void=
 #__________________
 # Dependencies specific to this example
 import ngpu/tech/shared/gen
-from   ngpu/element/window import ratio
 
 #_____________________________
 # Shader code
@@ -142,16 +141,14 @@ import ngpu/tech/shared/data # TODO: This should be imported auto, but missing R
 # Entry Point
 #__________________
 proc run=
-  echo "ngpu | Hello Multi-Mesh"
+  echo cfg.Prefix&" | Hello Multi-Mesh"
   #__________________
-  # Init a new Renderer
-  e.render = Renderer.new(
-    title    = "ngpu | Hello Multi-Mesh",
-    label    = "ngpu",
-    res      = cfg.res,
-    key      = key,
-    mousePos = mousePos,
-    ) # << state.render.init()
+  # Init the window+input and Renderer
+  e.sys = nsys.init(cfg.res, cfg.Prefix&" | Hello Multi-Mesh",
+    key      = keyCB,
+    mousePos = mousePosCB,
+    ) # << state.sys.init()
+  e.render = ngpu.new(Renderer, system = e.sys, label = cfg.Prefix) # << state.render.init()
   #__________________
   # NEW:
   # 1. Create the camera
@@ -164,9 +161,9 @@ proc run=
     far    = 100.0,
     )
   # 2. Generate the camera transform matrix (WVP)
-  u.W = mat4()                            # Identity matrix for the Model-to-World conversion of our cube and pyramid coordinates
-  u.V = cam.view()                        # Get the view matrix from the camera
-  u.P = cam.proj(e.render.sys.win.ratio)  # Get the proj matrix from the camera, based on the current screen size
+  u.W = mat4()                     # Identity matrix for the Model-to-World conversion of our cube and pyramid coordinates
+  u.V = cam.view()                 # Get the view matrix from the camera
+  u.P = cam.proj(e.sys.win.ratio)  # Get the proj matrix from the camera, based on the current screen size
   #__________________
   # Init the Data, Mesh and Technique
   var texture = e.render.new(Texture, img, "texPixels", "texSampler")  # Create the Texture     (sampled with default settings)
@@ -185,7 +182,8 @@ proc run=
   e.render.upload(uniform)
   #__________________
   # Update loop
-  while not e.render.close():
+  while not e.sys.close():
+    e.sys.update()
     # 3. Update the camera at the beginning of the frame
     inputUpdate()   # Camera needs updated inputs for this frame  (should be coming from ndk/nin)
     e.cam.update()  # Update the camera properties
@@ -199,6 +197,7 @@ proc run=
   #__________________
   # Terminate
   e.render.term()
+  e.sys.term()
 
 
 #________________________________________________
