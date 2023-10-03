@@ -4,15 +4,13 @@
 # n*dk dependencies
 import nsys
 # n*gpu dependencies
-import ngpu/types
-import ./extras
-
-#__________________
-# e00
-var sys *:nsys.System
+import ngpu/types as ngpu
+import ./types    as ex
 
 #__________________
 # Global
-var render *:Renderer
-var cam    *:Camera
+var sys    *:nsys.System
+var render *:ngpu.Renderer
+var cam    *:ex.Camera
+var i      *:ex.Inputs
 

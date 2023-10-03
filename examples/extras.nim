@@ -1,9 +1,15 @@
 #:____________________________________________________
 #  ngpu  |  Copyright (C) Ivan Mar (sOkam!)  |  MIT  |
 #:____________________________________________________
+# std dependencies
+import std/strformat
 # n*dk dependencies
 import nmath ; export nmath
 import nsys  ; export nsys
+# Examples dependencies
+import ./types as ex
+import ./state as e
+
 
 #_______________________________________
 # Math    : Should be coming from ndk/nmath
@@ -62,30 +68,10 @@ proc toGL   *[T](proj :GMat4[T]) :GMat4[T]=  proj*glMat4
 proc `<` *[T](v1,v2 :GVec2[T]) :bool=  v1.length < v2.length
 
 
-#__________________________________________________
-# Input system    : Should be coming from ndk/nin
-#____________________
-type Cursor * = object
-  pos*, chg* :Vec2
-type Inputs * = object
-  fw*,bw*,lf*,rt* :bool
-  cursor*         :Cursor
-
-
-#__________________________________________________
-# Camera    : Should be coming from ndk/ncam
-#____________________
-type Camera * = object
-  # Note: pos/rot/up should be a Transform instead.
-  pos   *:Vec3     ## Position / Origin point of the camera
-  rot   *:Vec3     ## X/Y/Z angles of rotation (pitch, yaw, roll)
-  up    *:Vec3     ## Up direction for the camera (in world space)
-  fov   *:float32  ## fov Y angle in degrees (vmath format)
-  near  *:float32  ## Nearest  distance that the camera can see
-  far   *:float32  ## Farthest distance that the camera can see
-
+#________________________________________________
+# camera.nim
+#__________________
 const SafePitch = Tau-Epsilon
-
 #____________________
 proc new *(_ :typedesc[Camera]; origin, target, up :Vec3; fov, near, far :float32) :Camera=
   result.rot  = origin.lookAt(target, up).angles
@@ -122,4 +108,51 @@ proc rotate *(cam :var Camera; chg :Vec2) :void=
   cam.rot.x += chg.y * -scale                        # Y movement = Rotation around X
   cam.rot.y += chg.x * -scale                        # X movement = Rotation around Y
   cam.rot.x.clamp(-SafePitch, SafePitch) # Clamp vertical rotation to never reach the top or bottom
+
+#____________________
+const spd = 0.125'f
+proc update *(cam :var Camera) :void=
+  # WASD movement
+  if i.fw:  cam.move(cam.dir   * -spd)
+  if i.bw:  cam.move(cam.dir   *  spd)
+  if i.lf:  cam.move(cam.right * -spd)
+  if i.rt:  cam.move(cam.right *  spd)
+  # Mouse control
+  cam.rotate(i.cursor.chg)
+  i.cursor.chg = vec2(0,0) # Reset after each frame
+
+
+#_____________________________
+# input.nim
+#___________________
+from nglfw as glfw import nil
+#__________________
+proc keyCB *(win :glfw.Window; key, code, action, mods :cint) :void {.cdecl.}=
+  ## GLFW Keyboard Input Callback
+  let hold = action == glfw.Press or action == glfw.Repeat
+  let rls  = action == glfw.Release
+  if key == glfw.KeyEscape and action == glfw.Press:
+    glfw.setWindowShouldClose(win, true)
+  # Input manager: Update state
+  case key
+  of glfw.KeyW:
+    if hold: i.fw = true elif rls: i.fw = false
+  of glfw.KeyS:
+    if hold: i.bw = true elif rls: i.bw = false
+  of glfw.KeyA:
+    if hold: i.lf = true elif rls: i.lf = false
+  of glfw.KeyD:
+    if hold: i.rt = true elif rls: i.rt = false
+  of glfw.KeySpace:
+    if action == glfw.Press: echo &"pos:{cam.pos}  trg:{cam.dir}"
+  else: discard
+#__________________
+proc mousePosCB *(window :glfw.Window; xpos, ypos :float64) :void {.cdecl.}=
+  ## GLFW Mouse Position Input Callback
+  let chg = vec2(
+    xpos.float32 - i.cursor.pos.x,
+    ypos.float32 - i.cursor.pos.y,
+    )  # Current - previous
+  if chg < vec2(10,10): i.cursor.chg += chg  # Accumulate multiple events across the same frame
+  i.cursor.pos = vec2(xpos, ypos)            # Store current x,y
 
