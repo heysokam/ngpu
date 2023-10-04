@@ -26,7 +26,7 @@
 
 
 ## 0.2.0 : Model from file
-- [ ] Single Mesh
+- [x] Single Mesh
 - [ ] Multi-Mesh Model
 - [ ] Multi-Model Scene
 ## 0.3.0 : Simple Forward
