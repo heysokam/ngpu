@@ -110,7 +110,7 @@ proc rotate *(cam :var Camera; chg :Vec2) :void=
   cam.rot.x.clamp(-SafePitch, SafePitch) # Clamp vertical rotation to never reach the top or bottom
 
 #____________________
-const spd = 0.125'f
+const spd = 0.425'f
 proc update *(cam :var Camera) :void=
   # WASD movement
   if i.fw:  cam.move(cam.dir   * -spd)

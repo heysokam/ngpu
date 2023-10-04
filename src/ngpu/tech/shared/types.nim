@@ -37,6 +37,6 @@ type RenderMesh * = ref object
   color   *:MeshAttribute[ngpu.Color]
   uv      *:MeshAttribute[Vec2]
   norm    *:MeshAttribute[Vec3]
-  inds    *:MeshIndices[UVec3]
+  inds    *:MeshIndices[U16Vec3]
   buffer  *:ngpu.Buffer[Mesh]
 

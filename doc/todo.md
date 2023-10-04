@@ -8,3 +8,10 @@ Low prio
 Might not need
 - [ ] texture.sampleCount > 1
 
+```md
+# Type format for Mesh loading optimization
+inds  : ptr[uint16]
+pos   : ptr[float32]
+color : ptr[uint8]
+norm  : ptr[float32]
+```

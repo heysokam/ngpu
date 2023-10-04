@@ -11,16 +11,6 @@ import ./mesh
 
 
 #_____________________________
-proc chk (mesh :Mesh) :void=
-  ## Checks that all attributes in the given Mesh contain the same amount of vertex.
-  let vertc = mesh.vertCount.int
-  assert mesh != nil, "Mesh object must be initialized"
-  assert vertc == mesh.color.len and 
-         vertc == mesh.uv.len and 
-         vertc == mesh.norm.len,
-         "All attributes must contain the same amount of vertex"
-
-#_____________________________
 proc triangle *() :Mesh=
   ## Creates a Triangle Mesh object, with Deinterleaved vertex attributes.
   result = Mesh(
@@ -46,7 +36,7 @@ proc triangle *() :Mesh=
       ], # norm
     inds: @[uvec3(0,1,2)]
     ) # << Mesh()
-  result.chk()
+  mesh.chk(result)
 
 #_____________________________
 proc cube *() :Mesh=
@@ -103,7 +93,7 @@ proc cube *() :Mesh=
       uvec3(2, 1, 6), uvec3(1, 6, 5),  # Right  face
       ] # << inds
     ) # << Mesh()
-  result.chk()
+  mesh.chk(result)
 #__________________
 proc pyramid *() :Mesh=
   ## Generates a Pyramid mesh with Deinterleaved vertex attributes
@@ -142,5 +132,5 @@ proc pyramid *() :Mesh=
       uvec3(0, 1, 4), uvec3(1, 2, 4), uvec3(2, 3, 4), uvec3(3, 0, 4),  # Sides
       ], # << inds
     ) # << Mesh()
-  result.chk()
+  mesh.chk(result)
 

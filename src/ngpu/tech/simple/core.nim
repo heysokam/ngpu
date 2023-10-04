@@ -83,6 +83,11 @@ proc init *(render :var Renderer; code :str= shader.Code) :RenderTech=
 #___________________
 proc set *(trg :RenderTarget; mesh :RenderMesh) :void=
   ## Sets the Indices and Attributes of the Mesh.buffer in the RenderTarget
+  if not mesh.hasPos    : raise newException(DataError, "Assigning a RenderMesh without position data to a RenderTarget is an illegal operation.")
+  if not mesh.hasInds   : raise newException(DataError, "Assigning a RenderMesh without indices  data to a RenderTarget is not supported.")
+  if not mesh.hasColors : raise newException(DataError, "Assigning a RenderMesh without colors   data to a RenderTarget is not supported.")
+  if not mesh.hasUVs    : raise newException(DataError, "Assigning a RenderMesh without uvs      data to a RenderTarget is not supported.")
+  if not mesh.hasNorms  : raise newException(DataError, "Assigning a RenderMesh without normals  data to a RenderTarget is not supported.")
   trg.ct.setIndexBuffer(mesh.inds.format, mesh.buffer.ct, mesh.inds.offset,  mesh.inds.size)
   trg.ct.setVertexBuffer(mesh.pos.kind,   mesh.buffer.ct, mesh.pos.offset,   mesh.pos.size)
   trg.ct.setVertexBuffer(mesh.color.kind, mesh.buffer.ct, mesh.color.offset, mesh.color.size)

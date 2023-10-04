@@ -8,7 +8,7 @@ _Don't be fooled by the `web` part. This project's target is native gpu usage._
 ngpu is a cohesive graphics library, built on top of other tools.  
 
 Not agnostic. Technically a renderer:  
-- Goes beyond a raw wrapper, and takes assumptions on how rendering will be done.  
+- Makes assumptions on how rendering will be done.  
 - Provides notions of data beyond what a pure API would.  
 - Doesn't try to be agnostic or generalistic.  
 - One single purpose: Tools to create a good modern renderer.  

@@ -79,7 +79,11 @@ struct VertOut {
   return textureSample(texPixels, texSampler, in.uv);
 }
 """
-const MeshFile = Path currentSourcePath().parentDir()/"mdl"/"bottle"/"bottle.gltf"
+const Cube      = Path currentSourcePath().parentDir()/"mdl"/"cube"/"cube.gltf"
+const Bottle    = Path currentSourcePath().parentDir()/"mdl"/"bottle"/"bottle.gltf"
+const Triangle  = Path currentSourcePath().parentDir()/"mdl"/"triangle"/"simple.gltf"
+const Triangle2 = Path currentSourcePath().parentDir()/"mdl"/"triangle"/"normals.gltf"
+const MeshFile  = Bottle
 
 
 #________________________________________________
@@ -110,7 +114,7 @@ proc run=
     up     = vec3(0, 1, 0),
     fov    = 45.0,  # 90 degree vertical fov
     near   = 0.1,
-    far    = 100.0,
+    far    = 10000.0,
     )
   # 2. Generate the camera transform matrix (WVP)
   u.W = mat4()                     # Identity matrix for the Model-to-World conversion of our cube and pyramid coordinates

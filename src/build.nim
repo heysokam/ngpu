@@ -4,7 +4,6 @@
 # std dependencies
 import std/os except `/`
 import std/sets
-import std/strformat
 # confy dependencies
 when not defined(nimble):
   import ../../confy/src/confy
@@ -17,9 +16,10 @@ else:
 #___________________
 # Custom
 const debug       :bool= on
-const memdebug    :bool= on and debug
+const gdb         :bool= off and debug
+const memdebug    :bool= off and debug
 const release     :bool= not debug
-const alwaysClean :bool= on
+const alwaysClean :bool= off
 # Confy
 cfg.verbose = debug
 cfg.flags   = allC
@@ -29,7 +29,7 @@ cfg.flags   = allC
 #___________________
 proc exec (file :string) :void=
   when memdebug : sh file
-  elif debug    : sh &"nim-gdb -ex run " & file
+  elif gdb      : sh &"nim-gdb -ex run " & file
   else          : sh file
 
 #________________________________________
@@ -74,4 +74,5 @@ example depth,     "Example 13:  simple depth buffer attachment.",             "
 example camera,    "Example 14:  simple 3D camera controller.",                "e14_hellocamera"
 example instance, " Example 16:  cube instanced 100 times.",                   "e16_cubeinstanced"
 example multimesh, "Example 17:  multi-mesh. cubes + pyramid.",                "e17_multimesh"
+example gltfmesh,  "Example 18:  glTF single mesh.",                           "e18_gltfmesh"
 
