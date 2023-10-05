@@ -3,7 +3,7 @@
 #:____________________________________________________
 # Package
 packageName   = "ngpu"
-version       = "0.1.6"
+version       = "0.1.7"
 author        = "sOkam"
 description   = "n*gpu | Graphics Library | WebGPU"
 license       = "MIT"
@@ -31,7 +31,7 @@ task push, "Helper:  Pushes the git repository, and orders to create a new git t
 template build (name :untyped; descr :static string)=
   ## Generates a task to build+run the given example
   taskRequires astToStr(name), "https://github.com/heysokam/confy#head"
-  task name, descr: exec &"nim -d:nimble confy.nims {astToStr(name)}"
+  task name, descr: exec &"nim -d:cnimble confy.nims {astToStr(name)}"
 
 
 #_______________________________________

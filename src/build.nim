@@ -19,7 +19,7 @@ const debug       :bool= on
 const gdb         :bool= off and debug
 const memdebug    :bool= off and debug
 const release     :bool= not debug
-const alwaysClean :bool= off
+const alwaysClean :bool= on
 # Confy
 cfg.verbose = debug
 cfg.flags   = allC
@@ -75,4 +75,5 @@ example camera,    "Example 14:  simple 3D camera controller.",                "
 example instance, " Example 16:  cube instanced 100 times.",                   "e16_cubeinstanced"
 example multimesh, "Example 17:  multi-mesh. cubes + pyramid.",                "e17_multimesh"
 example gltfmesh,  "Example 18:  glTF single mesh.",                           "e18_gltfmesh"
+example gltfmodel, "Example 18:  glTF Model.",                                 "e19_gltfmodel"
 
