@@ -11,8 +11,9 @@ import nimp/mdl    as nimp
 import ../../types as ngpu
 
 #_____________________________
-# Export the nimp.Mesh type
+# Export the n*imp Mesh and Model types
 export nimp.Mesh
+export nimp.Model
 
 #_____________________________
 type Attr *{.pure.}= enum pos, color, uv, norm
@@ -39,4 +40,9 @@ type RenderMesh * = ref object
   norm    *:MeshAttribute[Vec3]
   inds    *:MeshIndices[U16Vec3]
   buffer  *:ngpu.Buffer[Mesh]
+#_____________________________
+type RenderModel * = ref object
+  mesh *:seq[RenderMesh]
+  # TODO: Transform[T]
+  #       Other properties ?
 

@@ -14,6 +14,7 @@ import ./types as ngpu
 # Shared
 import ./tech/shared/types as Type
 export Type.RenderMesh
+export Type.RenderModel
 import ./tech/shared/mesh
 export mesh.new
 export mesh.upload
@@ -65,4 +66,7 @@ proc draw *(render :var Renderer; mesh :seq[RenderMesh]; tech :var RenderTech) :
 proc draw *(render :var Renderer; mesh :RenderMesh; tech :var RenderTech) :void=  render.draw( @[mesh], tech )
   ## Draws a single mesh.  note: Alias for ergonomics.
   ## Converts into a list, and draws it with the seq[RenderMesh] function instead.
+#___________________
+proc draw *(render :var Renderer; model :RenderModel; tech :var RenderTech) :void=  render.draw( model.mesh, tech )
+  ## Draws all of the meshes of the given RenderModel object.
 

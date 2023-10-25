@@ -50,7 +50,3 @@ build depth,     "Example 13:  simple depth buffer attachment."
 build camera,    "Example 14:  simple 3D camera controller."
 build instance, " Example 16:  cube instanced 100 times."
 build multimesh, "Example 17:  multi-mesh. cubes + pyramid."
-
-
-
-requires "https://github.com/heysokam/confy"

@@ -21,7 +21,7 @@ proc default *(_:typedesc[PrimitiveState]) :PrimitiveState=
     topology         : PrimitiveTopology.triangleList,
     stripIndexFormat : IndexFormat.undefined,
     frontFace        : FrontFace.ccw,
-    cullMode         : CullMode.none,
+    cullMode         : CullMode.back,
     ) # << PrimitiveState( ... )
 #_______________________________________
 proc default *(_:typedesc[MultisampleState]) :MultisampleState=

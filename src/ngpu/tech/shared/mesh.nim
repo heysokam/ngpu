@@ -190,6 +190,13 @@ proc new *(render :Renderer; _:typedesc[RenderMesh];
     label  : str = "ngpu | RenderMesh";
   ) :RenderMesh=
   RenderMesh.new(mesh, render.device, label)
+#__________________
+proc new *(render :Renderer; _:typedesc[RenderModel];
+    model  : Model;
+    label  : str = "ngpu | RenderMesh";
+  ) :RenderModel=
+  new result
+  for mesh in model: result.mesh.add RenderMesh.new(mesh, render.device, label)
 
 #__________________
 proc upload *[T](
@@ -218,4 +225,7 @@ proc upload *(
 #___________________
 proc upload *(render :Renderer; mesh :RenderMesh) :void=  render.device.upload(mesh)
   ## Queues upload operations to copy the given RenderMesh data to its GPU buffer.
+proc upload *(render :Renderer; model :RenderModel) :void=
+  ## Queues upload operations to copy the given RenderModel data to its GPU buffers.
+  for mesh in model.mesh: render.device.upload(mesh)
 

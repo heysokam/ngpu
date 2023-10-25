@@ -129,14 +129,17 @@ proc simple *(r :var Renderer; meshes :seq[RenderMesh]; tech :var RenderTech) :v
   target.release(tech.phase[0].pass[0].trg.depth) # Not doing this causes a huge 2GB/sec memory leak
 
 #___________________
-proc draw *(render :var Renderer; mesh :seq[RenderMesh]; tech :var RenderTech) :void=
+proc draw *(render :var Renderer; model :seq[RenderMesh]; tech :var RenderTech) :void=
   ## Draws the given list of meshes using the Pipeline of the given Tech.Simple.
   render.updateView()        # Update the swapChain's View  (we draw into it each frame)
   render.updateEncoder()     # Create this frame's Command Encoder
-  render.simple(mesh, tech)  # Order to draw the mesh list with the Tech.Simple and the given data
+  render.simple(model, tech) # Order to draw the model's mesh list with the Tech.Simple and the given data
   render.submitQueue()       # Submit the Rendering Queue
   render.present()           # Present the next swapchain texture on the screen.
 #___________________
 proc draw *(render :var Renderer; mesh :RenderMesh; tech :var RenderTech) :void=  render.draw(@[mesh], tech)
-  ## Draws the given mesh using the Pipeline of the given Tech.Simple.
+  ## Draws the given RenderMesh using the Pipeline of the given Tech.Simple.
+#___________________
+proc draw *(render :var Renderer; model :RenderModel; tech :var RenderTech) :void=  render.draw(model.mesh, tech)
+  ## Draws the given RenderModel using the Pipeline of the given Tech.Simple.
 
