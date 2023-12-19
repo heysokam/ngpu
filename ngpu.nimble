@@ -5,7 +5,7 @@
 packageName   = "ngpu"
 version       = "0.1.7"
 author        = "sOkam"
-description   = "n*gpu | Graphics Library | WebGPU"
+description   = "n*gpu | Graphics Library"
 license       = "MIT"
 srcDir        = "src"
 skipFiles     = @["build.nim", "nim.cfg"]

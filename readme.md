@@ -1,3 +1,11 @@
+> **Deprecation Warning:**  
+> _This library is in the process of deprecating `wgpu-native` entirely._  
+> _The wgpu wrapper @[heysokam/wgpu](https://github.com/heysokam/wgpu) has been archived and won't be updated._  
+> _The backend is currently (dec.2023) being rewritten to use a Vulkan C abstraction instead._  
+>  
+> _The design goals of the new backend are the exact same as the ones in this library, but the API backend used will be completely different._  
+> _This library will eventually transform to become a Nim wrapper for that newly created C library (will take some time)._
+
 # n*gpu | Graphics Library for Nim
 ![ngpu](./doc/res/gh_banner.png)
 Rendering library, targeting the design concepts of WebGPU-native.  
