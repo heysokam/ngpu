@@ -1,3 +1,16 @@
+> **!!! BIG WARNING  !!  READ THIS FIRST  !!!**  
+>
+> This library is **NOT usable.**  
+>
+> And it won't be usable until the port to Vulkan is done.  
+> Which will take 2+years (starting 2024)... or might actually never happen  
+> _(I don't use nim as my main lang anymore)_
+>
+> This library is **NOT** one of your options if you are searching for `nicer wgpu / webgpu for nim`  
+> The documentation is kept here for reference, because I sadly don't have the time to update it at the moment.
+
+---
+
 > **Deprecation Warning:**  
 > _This library is in the process of deprecating `wgpu-native` entirely._  
 > _The wgpu wrapper @[heysokam/wgpu](https://github.com/heysokam/wgpu) has been archived and won't be updated._  
